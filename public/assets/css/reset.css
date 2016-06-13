@@ -1,0 +1,9 @@
+body.boxed-layout{background: none}
+.wrapper-content{padding: 10px;}
+/*left menu*/
+#page-wrapper{margin: 0 0 0 200px}
+body.canvas-menu .navbar-static-side, body.fixed-sidebar .navbar-static-side{width: 200px;}
+.nav-header{padding: 10px 0px}
+.nav-header ul.dropdown-menu{width: 193px;margin:10px 3px 0 5px;}
+.nav-header ul.dropdown-menu i.top-arrow{  color: white; font-size: 28px;left: 90px;position: absolute; top: -19px;}
+
