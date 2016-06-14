@@ -1,4 +1,5 @@
 @extends('admin.common.frame')
+@section('body_style_class','gray-bg mini-navbar pace-done')
 @section('header')
     <link href="/assets/css/reset.css" rel="stylesheet">
 @endsection

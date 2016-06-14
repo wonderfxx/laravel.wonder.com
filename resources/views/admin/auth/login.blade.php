@@ -1,7 +1,6 @@
 @extends('admin.common.frame')
-@section('domain','wonder.com')
 @section('lang','zh-CN')
-
+@section('body_style_class','gray-bg mini-navbar  pace-done')
 @section('header')
     <style type="text/css">
         .bt-style {
@@ -48,6 +47,7 @@
                         null,
                         ['class'        =>'form-control animation_select',
                         'required'      => '',
+                        'id'            => 'email',
                         'placeholder'   =>'请输入您的邮箱地址']
                     ) !!}
                 </div>
@@ -58,6 +58,7 @@
                         'password',
                         ['class'        =>'form-control',
                         'required'      => '',
+                        'id'            => 'password',
                         'placeholder'   =>'请输入您的帐号密码']
                     ) !!}
                 </div>
@@ -67,15 +68,17 @@
                     ['class'=>'btn btn-success block full-width m-b',]
                 ) !!}
                 <p class="text-muted text-center">
-                    <a href="{!! url('/adm/resetPwd') !!}">
-                        <small>找回密码</small>
-                    </a> | <a href="{!! url('/adm/register') !!}">
+                    <a href="{!! url('/adm/register') !!}">
                         <small>创建一个新账户？</small>
-                        <i class="fa fa-user-plus"></i></a>
+                        <i class="fa fa-user-plus"></i>
+                    </a>
                 </p>
             </div>
             {!! Form::close() !!}
         </div>
+    </div>
+    <div id="error">
+
     </div>
 @endsection
 @section('footer')
@@ -112,38 +115,38 @@
                 },
                 submitHandler: function (form) {  //通过之后回调
                     var param = $("#loginForm").serialize();
-                    $.ajaxSetup({
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf_token"]').attr('content')
-                        }
-                    });
                     $.ajax({
                         url: "{{url('adm/login')}}",
                         type: "post",
                         dataType: "json",
                         data: param,
+                        success:function (data) {
+                            location.href = '{!! url('adm/') !!}';
+                        },
                         error: function (data) { // the data parameter here is a jqXHR instance
                             var errors = data.responseJSON;
                             console.log(data);
                             switch (data.status) {
-                                case 200:
-                                    top.location.href = "{{url('adm/home')}}";
-                                    break;
                                 case 422:
                                     shakeForm();
-                                    if (errors.username) {
-                                        $('#username-error').html(e + errors.username);
-                                    } else if (errors.email) {
+                                    if (errors.email) {
+                                        $('#email').parent().removeClass('has-success').addClass('has-error');
                                         $('#email-error').html(e + errors.email);
                                     } else if (errors.password) {
-                                        $('#password_confirmation-error').html(e + errors.password);
+                                        $('#password').parent().removeClass('has-success').addClass('has-error');
+                                        $('#password-error').html(e + errors.password);
                                     } else {
-                                        alert('验证失败请重试。');
+                                        alert(errors.error);
                                     }
                                     break;
+                                case 302:
+                                    location.href = '{!! url('adm/verify') !!}';
+                                    break;
+                                case 200:
+                                    //location.href = '{!! url('adm/') !!}';
+                                    break;
                                 default:
-                                    console.log(data);
-                                    alert('登陆失败请重试。');
+                                    alert('登陆超时,请重试。');
                             }
                         }
                     });

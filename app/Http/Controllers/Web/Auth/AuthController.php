@@ -28,7 +28,11 @@ class AuthController extends Controller
      *
      * @var string
      */
-//    protected $redirectTo = '/adm';
+    protected $redirectTo = '/adm/login';
+    protected $guard = 'web';
+    protected $loginView           = 'web.auth.login';
+    protected $registerView        = 'web.auth.register';
+    protected $redirectAfterLogout = "/login";
 
     /**
      * Create a new authentication controller instance.
@@ -51,7 +55,7 @@ class AuthController extends Controller
     {
         return Validator::make($data, [
             'username' => 'required|max:50',
-            'email'    => 'required|email|max:255|unique:adm_users',
+            'email'    => 'required|email|max:255|unique:users',
             'password' => 'required|min:6|confirmed',
         ]);
     }
@@ -76,13 +80,13 @@ class AuthController extends Controller
                                ]);
     }
 
-    public function showLoginForm()
-    {
-        return view('web.auth.login');
-    }
-
-    public function showRegistrationForm()
-    {
-        return view('web.auth.register');
-    }
+//    public function showLoginForm()
+//    {
+//        return view('web.auth.login');
+//    }
+//
+//    public function showRegistrationForm()
+//    {
+//        return view('web.auth.register');
+//    }
 }

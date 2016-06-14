@@ -27,12 +27,12 @@
     <script src="/assets/js/plugins/pace/pace.min.js" type="text/javascript"></script>
     <script src="/assets/js/action.min.js" type="text/javascript"></script>
     <script type="text/javascript">
-        document.domain = "@yield('domain')";
+        //document.domain = "@yield('domain')";
     </script>
 @section('header')
     {{--do something header info...--}}
 @show
-<body class="gray-bg">
+<body class="@yield('body_style_class')">
 @section('content')
     {{--do something content info...--}}
 @show

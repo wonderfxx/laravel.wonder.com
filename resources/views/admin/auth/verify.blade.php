@@ -1,4 +1,5 @@
 @extends('admin.common.frame')
+@section('lang','zh-CN')
 @section('body_style_class','gray-bg mini-navbar  pace-done')
 @section('header')
     <style type="text/css">
@@ -14,81 +15,39 @@
         .error-display div {
             text-align: left
         }
-
-        .error-color {
-            color: red
-        }
-
-        .valid-color {
-            color: #999
-        }
     </style>
 @endsection
-@section('lang','zh-CN')
 @section('content')
     <div class="middle-box text-center loginscreen  animated fadeInDown">
-        <div id="signup-form" data-animation="shake">
+        <div id="login-form" data-animation="shake">
             <div>
                 <h1 class="logo-name">
                     <img class="img-circle circle-border" src="/assets/img/logo.png" alt="image">
                 </h1>
             </div>
             {!! Form::open([
-                    'id'        =>'signupForm',
-                    'novalidate'=>'novalidate',
-                    'class'     =>'m-t',
-                    'url'       =>url('adm/register')
-                ]) !!}
+                'id'        =>'loginForm',
+                'novalidate'=>'novalidate',
+                'class'     =>'m-t',
+                'url'       =>url('adm/verify')
+            ]) !!}
             <div class="form-group">
-                <div class="input-group bt-style">
-                    <span class="input-group-addon"><i class="fa fa-lock"></i></span>
-                    {!! Form::text(
-                        'username',
-                        null,
-                        ['class'        =>'form-control',
-                        'required'      => '',
-                        'placeholder'   =>'请输入您的昵称']
-                    ) !!}
-                </div>
-                <div class="input-group error-display"></div>
                 <div class="input-group bt-style">
                     <span class="input-group-addon"><i class="fa fa-user"></i></span>
                     {!! Form::text(
                         'email',
                         null,
-                        ['class'        =>'form-control',
+                        ['class'        =>'form-control animation_select',
                         'required'      => '',
-                        'placeholder'   =>'请输入您的邮箱地址']
+                        'readonly'      => true,
+                        'placeholder'   => Session::get('verify_email')]
                     ) !!}
                 </div>
                 <div class="input-group error-display"></div>
-                <div class="input-group bt-style">
-                    <span class="input-group-addon"><i class="fa fa-lock"></i></span>
-                    {!! Form::password(
-                        'password',
-                        ['class'        =>'form-control',
-                        'required'      => '',
-                        'id'            => 'password',
-                        'placeholder'   =>'请输入您的帐号密码']
-                    ) !!}
+                <div class="input-group bt-style" style="text-align:center;display: block;color: red;">
+                    {!! Lang::get('auth.verifingError') !!}
                 </div>
                 <div class="input-group error-display"></div>
-                <div class="input-group bt-style">
-                    <span class="input-group-addon"><i class="fa fa-lock"></i></span>
-                    {!! Form::password(
-                        'password_confirmation',
-                        ['class'        =>'form-control',
-                        'required'      => '',
-                        'placeholder'   =>'请再次输入您的帐号密码']
-                    ) !!}
-                </div>
-
-
-                <div class="input-group error-display"></div>
-                {!! Form::submit(
-                    '注 册',
-                    ['class'=>'btn btn-success block full-width m-b',]
-                ) !!}
                 <p class="text-muted text-center">
                     <a href="{!! url('/adm/login') !!}">
                         <small>已经有账户了？</small>
@@ -97,6 +56,9 @@
             </div>
             {!! Form::close() !!}
         </div>
+    </div>
+    <div id="error">
+
     </div>
 @endsection
 @section('footer')
@@ -108,7 +70,7 @@
                 $(e).closest(".input-group").removeClass("has-success").addClass("has-error")
             },
             success: function (e) {
-                $("#signup-form").removeAttr("class").attr("class", "");
+                $("#login-form").removeAttr("class").attr("class", "");
                 e.parent().prev().removeClass("has-error").addClass("has-success");
                 e.closest(".input-group").removeClass("has-error").addClass("has-success")
             },
@@ -119,42 +81,32 @@
             errorClass: "error-color",
             validClass: "valid-color"
         });
-        $().ready(function () {
+        $(document).ready(function () {
             var e = "<i class='fa fa-times-circle'></i> ";
-            $("#signupForm").validate({
+            $("#loginForm").validate({
                 onsubmit: true,
                 rules: {
-                    username: {required: !0, minlength: 6},
                     email: {required: !0, email: !0},
-                    password: {required: !0, minlength: 6},
-                    password_confirmation: {required: !0, minlength: 6, equalTo: "#password"}
+                    password: {required: !0, minlength: 5}
                 },
                 messages: {
-                    username: {required: e + "用户昵称不能为空"},
                     email: {required: e + "邮箱地址不能为空", email: e + "请输入有效的邮箱地址"},
-                    password: {required: e + "账户密码不能为空", minlength: e + "账户密码必须6个字符以上"},
-                    password_confirmation: {
-                        required: e + "请再次输入账户密码",
-                        minlength: e + "账户密码必须6个字符以上",
-                        equalTo: e + "两次输入的账户密码不一致"
-                    }
+                    password: {required: e + "账户密码不能为空", minlength: e + "账户密码必须5个字符以上"}
                 },
                 submitHandler: function (form) {  //通过之后回调
-                    var param = $("#signupForm").serialize();
+                    var param = $("#loginForm").serialize();
                     $.ajax({
-                        url: "{{url('adm/register')}}",
+                        url: "{{url('adm/login')}}",
                         type: "post",
                         dataType: "json",
                         data: param,
                         success:function (data) {
-                            top.location.href = "{{url('adm/verify')}}";
+                            location.href = '{!! url('adm/') !!}';
                         },
                         error: function (data) { // the data parameter here is a jqXHR instance
                             var errors = data.responseJSON;
+                            console.log(data);
                             switch (data.status) {
-                                case 200:
-                                    top.location.href = "{{url('adm/verify')}}";
-                                    break;
                                 case 422:
                                     shakeForm();
                                     if (errors.username) {
@@ -164,11 +116,14 @@
                                     } else if (errors.password) {
                                         $('#password_confirmation-error').html(e + errors.password);
                                     } else {
-                                        alert(errors.error);
+                                        alert('登陆失败请重试。');
                                     }
                                     break;
+                                case 302:
+                                    location.href = '{!! url('adm/verify') !!}';
+                                    break;
                                 default:
-                                    alert('注册失败,请重试。');
+                                    alert('登陆失败请重试。');
                             }
                         }
                     });
@@ -180,8 +135,8 @@
             });
 
             function shakeForm() {
-                var obj = $("#signup-form");
-                obj.removeAttr("class").attr("class", "");
+                var obj = $("#login-form");
+                obj.removeAttr("class").attr('class', '');
                 obj.addClass("animated");
                 obj.addClass(obj.attr("data-animation"));
             }

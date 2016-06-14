@@ -20,7 +20,8 @@ class PasswordController extends Controller
 
     use ResetsPasswords;
 
-    
+    protected $guard  = 'admin';
+    protected $broker = 'admin';
 
     /**
      * Create a new password controller instance.
@@ -29,6 +30,6 @@ class PasswordController extends Controller
      */
     public function __construct()
     {
-        $this->middleware($this->guestMiddleware());
+        $this->middleware($this->guard);
     }
 }

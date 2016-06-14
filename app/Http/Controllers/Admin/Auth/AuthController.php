@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Admin\Auth;
 
-use App\Http\Requests\Request;
 use App\Models\AdmUser;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Input;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Validator;
+use Illuminate\Support\Facades\Lang;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
@@ -30,9 +32,9 @@ class AuthController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/adm';
-
-    protected $guard = 'admins';
+    protected $redirectTo       = '/adm';
+    protected $authPasswordSalt = 'zXm1rUgHsLsotB745y';
+    protected $guard            = 'admin';
 
     protected $loginView           = 'admin.auth.login';
     protected $registerView        = 'admin.auth.register';
@@ -40,55 +42,141 @@ class AuthController extends Controller
     protected $maxLoginAttempts    = '5';
     protected $lockoutTime         = '60';
 
-    /**
-     * Create a new authentication controller instance.
-     *
-     * @return void
-     */
-//    public function __construct()
-//    {
-//        $this->middleware($this->guard, ['except' => 'logout']);
-//    }
-
-    /**
-     * Get a validator for an incoming registration request.
-     *
-     * @param  array $data
-     *
-     * @return \Illuminate\Contracts\Validation\Validator
-     */
-    protected function validator(array $data)
+    public function registerAction()
     {
-        return Validator::make($data, [
+
+        $rules = [
             'username' => 'required|max:50',
             'email'    => 'required|email|max:255|unique:adm_users',
-            'password' => 'required|min:6|confirmed',
-        ]);
+            'password' => 'required|min:6',
+        ];
+
+        $credentials = [
+            'username' => Input::get('username'),
+            'email'    => Input::get('email'),
+            'password' => Input::get('password'),
+        ];
+
+        //is logined
+        if (Auth::guard($this->guard)->check())
+        {
+            return JsonResponse::create(['success' => Lang::get('auth.success')], 200);
+        }
+
+        // format
+        $validator = Validator::make($credentials, $rules);
+        if (!$validator->passes())
+        {
+            return JsonResponse::create($validator->messages(), 422);
+        }
+
+        // account
+        $data = AdmUser::create([
+                                    'username'    => $credentials['username'],
+                                    'email'       => $credentials['email'],
+                                    'password'    => $this->makeMd5Auth($credentials['password']),
+                                    'remember'    => 'N',
+                                    'register_ip' => \Request::getClientIp(),
+                                    'status'      => 'N',
+                                    'created_at'  => time(),
+                                ]);
+        if (!empty($data))
+        {
+            \Session::set('verify_email', $credentials['email']);
+            return JsonResponse::create(['success' => Lang::get('auth.success')], 200);
+        }
+        else
+        {
+            return JsonResponse::create(['email' => Lang::get('auth.registerError')], 422);
+        }
+
+//        $isValidEmail = AdmUser::whereEmail($credentials['email'])->first();
+//        if (empty(!$isValidEmail))
+//        {
+//            return JsonResponse::create(['email' => Lang::get('auth.invalidEmailError')], 422);
+//        }
+
     }
 
     /**
-     * Create a new user instance after a valid registration.
+     * Check User Login
      *
-     * @param  array $data
-     *
-     * @return User
+     * @return \Symfony\Component\HttpFoundation\Response|static
      */
-    protected function create(array $data)
+    public function loginAction()
     {
-        return AdmUser::create([
-                                   'username'    => $data['username'],
-                                   'email'       => $data['email'],
-                                   'password'    => bcrypt($data['password']),
-                                   'remember'    => 'N',
-                                   'register_ip' => \Request::getClientIp(),
-                                   'status'      => 'N',
-                                   'created_at'  => time(),
-                               ]);
+
+        $rules       = [
+            'email'    => 'required|email',
+            'password' => 'required'
+        ];
+        $credentials = [
+            'email'    => Input::get('email'),
+            'password' => Input::get('password')
+        ];
+
+        //is logined
+        if (Auth::guard($this->guard)->check())
+        {
+            return JsonResponse::create(['success' => Lang::get('auth.success')], 200);
+        }
+
+        // format
+        $validator = Validator::make($credentials, $rules);
+        if (!$validator->passes())
+        {
+            return JsonResponse::create(['email' => Lang::get('auth.invalidFormatError')], 422);
+        }
+
+        // account
+        $isValidEmail = AdmUser::whereEmail($credentials['email'])->first();
+        if (empty($isValidEmail))
+        {
+            return JsonResponse::create(['email' => Lang::get('auth.invalidEmailError')], 422);
+        }
+
+        // password
+        $user = AdmUser::whereEmail($credentials['email'])
+                       ->wherePassword($this->makeMd5Auth($credentials['password']))
+                       ->first();
+        if (empty($user))
+        {
+            return JsonResponse::create(['password' => Lang::get('auth.invalidPasswordError')], 422);
+        }
+
+        // verifing
+        if ($user->status == 'N')
+        {
+            \Session::set('verify_email', $credentials['email']);
+
+            return JsonResponse::create(['error' => Lang::get('auth.verifingError')], 302);
+        }
+
+        // login
+        Auth::guard($this->guard)->login($user);
+        if (!Auth::guard($this->guard)->check())
+        {
+            return JsonResponse::create(['error' => Lang::get('auth.loginError')], 422);
+        }
+        else
+        {
+            return JsonResponse::create(['success' => Lang::get('auth.success')], 200);
+        }
     }
 
-//    public function authenticate()
-//    {
-//    }
+    /**
+     * 登陆验证
+     * @return mixed
+     */
+    public function verifyAction()
+    {
+        if (Auth::guard($this->guard)->check())
+        {
+            return redirect($this->redirectTo);
+        }
+
+        return view('admin.auth.verify');
+    }
 
     /**
      * 登陆
@@ -98,13 +186,13 @@ class AuthController extends Controller
     public function showLoginForm()
     {
 
-        if (Auth::check())
+        if (!Auth::guard($this->guard)->check())
         {
-            return redirect($this->redirectTo);
+            return view($this->loginView);
         }
         else
         {
-            return view($this->loginView);
+            return redirect($this->redirectTo);
         }
     }
 
@@ -114,14 +202,25 @@ class AuthController extends Controller
      */
     public function showRegistrationForm()
     {
-        if (Auth::check())
-        {
-            return redirect($this->redirectTo);
-        }
-        else
+        if (!Auth::guard($this->guard)->check())
         {
             return view($this->registerView);
         }
+        else
+        {
+            return redirect($this->redirectTo);
+        }
     }
 
+    /**
+     * Generate md5 auth
+     *
+     * @param $password
+     *
+     * @return string
+     */
+    private function makeMd5Auth($password)
+    {
+        return md5(md5($password) . $this->authPasswordSalt);
+    }
 }

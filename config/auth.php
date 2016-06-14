@@ -39,16 +39,16 @@ return [
 
     'guards' => [
 
-        // admin user authentication
-        'admins' => [
-            'driver' => 'session',
-            'provider' => 'admins',
-        ],
-
         // web user authentication
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
+        ],
+
+        // admin user authentication
+        'admin' => [
+            'driver' => 'session',
+            'provider' => 'admin',
         ],
 
         // api access authentication
@@ -86,7 +86,7 @@ return [
         ],
 
         // admin user tables
-        'admins' => [
+        'admin' => [
             'driver' => 'eloquent',
             'model' => App\Models\AdmUser::class,
         ],
@@ -116,15 +116,15 @@ return [
         // web user password reset
         'users' => [
             'provider' => 'users',
-            'email' => 'auth.emails.password',
+            'email' => 'web.auth.emails.password',
             'table' => 'password_resets',
             'expire' => 60,
         ],
 
         // admin user password reset
         'admins' => [
-            'provider' => 'admins',
-            'email' => 'auth.emails.password',
+            'provider' => 'admin',
+            'email' => 'admin.auth.emails.password',
             'table' => 'password_resets',
             'expire' => 60,
         ],

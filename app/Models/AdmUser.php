@@ -33,7 +33,7 @@ class AdmUser extends Authenticatable
 {
 
     protected $primaryKey = 'userid';
-    protected $guarded    = 'admins';
+//    protected $guarded    = 'admin';
     public    $timestamps = false;
 
     /**

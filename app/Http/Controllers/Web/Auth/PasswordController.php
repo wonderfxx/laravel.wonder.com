@@ -20,7 +20,7 @@ class PasswordController extends Controller
 
     use ResetsPasswords;
 
-    
+    protected $linkRequestView = 'web.auth.passwords.email';
 
     /**
      * Create a new password controller instance.

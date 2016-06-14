@@ -4,7 +4,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Support\Facades\Auth;
 
-class Admin
+class RedirectIfNotAdmin
 {
     /**
      * Handle an incoming request.
@@ -15,10 +15,9 @@ class Admin
      *
      * @return mixed
      */
-    public function handle($request, Closure $next, $guard = 'admins')
+    public function handle($request, Closure $next, $guard = 'admin')
     {
-
-        if (Auth::guard($guard)->guest())
+        if (!Auth::guard($guard)->check())
         {
             if ($request->ajax() || $request->wantsJson())
             {
@@ -26,7 +25,7 @@ class Admin
             }
             else
             {
-                redirect()->guest('/adm/login');
+                return redirect('/adm/login');
             }
         }
 

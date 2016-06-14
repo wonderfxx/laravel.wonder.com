@@ -11,6 +11,7 @@
 |
 */
 
+\DB::connection()->enableQueryLog();
 /**
  * Web System Auth Routes
  */
@@ -38,16 +39,17 @@ Route::group(['middleware' => ['web']], function () {
 /**
  * Admin System Auth Routes
  */
-Route::group(['middleware' => ['admins']], function () {
+Route::group(['middleware' => ['web']], function () {
 
     // Authentication Routes...
     Route::get('adm/login', 'Admin\Auth\AuthController@showLoginForm');
-    Route::post('adm/login', 'Admin\Auth\AuthController@login');
+    Route::post('adm/login', 'Admin\Auth\AuthController@loginAction');
     Route::get('adm/logout', 'Admin\Auth\AuthController@logout');
+    Route::get('adm/verify', 'Admin\Auth\AuthController@verifyAction');
 
     // Registration Routes...
     Route::get('adm/register', 'Admin\Auth\AuthController@showRegistrationForm');
-    Route::post('adm/register', 'Admin\Auth\AuthController@register');
+    Route::post('adm/register', 'Admin\Auth\AuthController@registerAction');
 
     // Password Reset Routes...
     Route::get('adm/password/reset/{token?}', 'Admin\Auth\PasswordController@showResetForm');

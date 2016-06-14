@@ -1,8 +1,8 @@
 <?php
 
 namespace App\Models;
+
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * App\Models\AdmUser
@@ -34,14 +34,25 @@ class User extends Authenticatable
 
     protected $primaryKey = 'userid';
     public    $timestamps = false;
-    protected $fillable   = ['username', 'password', 'email', 'register_ip', 'created_at', 'login_ip','updated_at',
-                             'remember','status'];
 
     /**
-     * @param array $fillable
+     * The attributes that are mass assignable.
+     *
+     * @var array
      */
-    public function setFillable($fillable)
-    {
-        $this->fillable = $fillable;
-    }
+    protected $fillable = [
+        'username', 'email', 'register_ip',
+        'created_at', 'login_ip', 'updated_at', 'remember', 'status',
+        'password', 'remember_token','api_token'
+    ];
+
+    /**
+     * The attributes excluded from the model's JSON form.
+     *
+     * @var array
+     */
+    protected $hidden = [
+
+    ];
+
 }
