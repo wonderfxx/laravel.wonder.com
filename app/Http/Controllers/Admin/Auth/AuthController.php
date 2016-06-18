@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Auth;
 
+use libraries\CommonFunc;
 use App\Models\AdmUser;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
@@ -32,16 +33,17 @@ class AuthController extends Controller
      *
      * @var string
      */
-    protected $redirectTo       = '/adm';
-    protected $authPasswordSalt = 'zXm1rUgHsLsotB745y';
-    protected $guard            = 'admin';
-
+    protected $redirectTo          = '/adm';
+    protected $guard               = 'admin';
     protected $loginView           = 'admin.auth.login';
     protected $registerView        = 'admin.auth.register';
     protected $redirectAfterLogout = "adm/login";
     protected $maxLoginAttempts    = '5';
     protected $lockoutTime         = '60';
 
+    /**
+     * @return \Symfony\Component\HttpFoundation\Response|static
+     */
     public function registerAction()
     {
 
@@ -74,7 +76,7 @@ class AuthController extends Controller
         $data = AdmUser::create([
                                     'username'    => $credentials['username'],
                                     'email'       => $credentials['email'],
-                                    'password'    => $this->makeMd5Auth($credentials['password']),
+                                    'password'    => CommonFunc::makeMd5Auth($credentials['password']),
                                     'remember'    => 'N',
                                     'register_ip' => \Request::getClientIp(),
                                     'status'      => 'N',
@@ -83,19 +85,13 @@ class AuthController extends Controller
         if (!empty($data))
         {
             \Session::set('verify_email', $credentials['email']);
+
             return JsonResponse::create(['success' => Lang::get('auth.success')], 200);
         }
         else
         {
             return JsonResponse::create(['email' => Lang::get('auth.registerError')], 422);
         }
-
-//        $isValidEmail = AdmUser::whereEmail($credentials['email'])->first();
-//        if (empty(!$isValidEmail))
-//        {
-//            return JsonResponse::create(['email' => Lang::get('auth.invalidEmailError')], 422);
-//        }
-
     }
 
     /**
@@ -137,8 +133,9 @@ class AuthController extends Controller
 
         // password
         $user = AdmUser::whereEmail($credentials['email'])
-                       ->wherePassword($this->makeMd5Auth($credentials['password']))
+                       ->wherePassword(CommonFunc::makeMd5Auth($credentials['password']))
                        ->first();
+
         if (empty($user))
         {
             return JsonResponse::create(['password' => Lang::get('auth.invalidPasswordError')], 422);
@@ -160,6 +157,9 @@ class AuthController extends Controller
         }
         else
         {
+            //update login
+            $user->update(['login_ip' => \Request::getClientIp(), 'updated_at' => time()]);
+
             return JsonResponse::create(['success' => Lang::get('auth.success')], 200);
         }
     }
@@ -212,15 +212,4 @@ class AuthController extends Controller
         }
     }
 
-    /**
-     * Generate md5 auth
-     *
-     * @param $password
-     *
-     * @return string
-     */
-    private function makeMd5Auth($password)
-    {
-        return md5(md5($password) . $this->authPasswordSalt);
-    }
 }

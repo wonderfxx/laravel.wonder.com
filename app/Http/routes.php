@@ -11,7 +11,6 @@
 |
 */
 
-\DB::connection()->enableQueryLog();
 /**
  * Web System Auth Routes
  */
@@ -52,9 +51,9 @@ Route::group(['middleware' => ['web']], function () {
     Route::post('adm/register', 'Admin\Auth\AuthController@registerAction');
 
     // Password Reset Routes...
-    Route::get('adm/password/reset/{token?}', 'Admin\Auth\PasswordController@showResetForm');
-    Route::post('adm/password/email', 'Admin\Auth\PasswordController@sendResetLinkEmail');
-    Route::post('adm/password/reset', 'Admin\Auth\PasswordController@reset');
+//    Route::get('adm/password/reset/{token?}', 'Admin\Auth\PasswordController@showResetForm');
+//    Route::post('adm/password/email', 'Admin\Auth\PasswordController@sendResetLinkEmail');
+    Route::post('adm/password/resetUser', 'Admin\Auth\PasswordController@resetLoginUser');
 
     //home
     Route::get('adm/', 'Admin\IndexController@index');

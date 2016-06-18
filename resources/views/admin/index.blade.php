@@ -27,7 +27,6 @@
                                 <li>
                                     <i class="fa fa-caret-up top-arrow" aria-hidden="true"></i>
                                     <a class="J_menuItem" href="{{url('adm/profile')}}">个人设置</a>
-                                    <a class="J_menuItem" href="{{url('adm/avatar')}}">编辑头像</a>
                                 </li>
                                 <li class="divider"></li>
                                 <li>
@@ -93,7 +92,7 @@
                 </button>
                 <nav class="page-tabs J_menuTabs">
                     <div class="page-tabs-content">
-                        <a href="javascript:;" class="active J_menuTab" data-id="{{url('adm/welcome')}}">首页</a>
+                        <a href="javascript:;" class="active J_menuTab" id="m_home" data-id="/adm/welcome">首页</a>
                     </div>
                 </nav>
                 <button class="roll-nav roll-right J_tabRight"><i class="fa fa-forward"></i>
@@ -114,8 +113,8 @@
                     退出</a>
             </div>
             <div class="row J_mainContent" id="content-main">
-                <iframe class="J_iframe" name="iframe0" width="100%" height="100%" src="{{url('/adm/welcome')}}"
-                        frameborder="0" data-id="{{url('/adm/welcome')}}" seamless></iframe>
+                <iframe class="J_iframe" name="iframe0" width="100%" height="100%" src="/adm/welcome"
+                        frameborder="0" data-id="/adm/welcome" seamless></iframe>
             </div>
             <div class="footer">
                 <div class="pull-right">&copy; 2014-2016</div>
