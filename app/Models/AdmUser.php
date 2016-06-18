@@ -28,12 +28,15 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereCreatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property string $remember_token
+ * @property string $api_token
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereRememberToken($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereApiToken($value)
  */
 class AdmUser extends Authenticatable
 {
 
     protected $primaryKey = 'userid';
-//    protected $guarded    = 'admin';
     public    $timestamps = false;
 
     /**

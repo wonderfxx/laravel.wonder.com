@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 /**
- * App\Models\AdmUser
+ * App\Models\User
  *
  * @property integer        $userid      用户ID
  * @property string         $username    用户名
@@ -28,6 +28,10 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereCreatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property string $sns_id 社交ID
+ * @property string $ad_source 用户来源
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\User whereSnsId($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\User whereAdSource($value)
  */
 class User extends Authenticatable
 {
@@ -42,8 +46,8 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'username', 'email', 'register_ip',
-        'created_at', 'login_ip', 'updated_at', 'remember', 'status',
-        'password', 'remember_token','api_token'
+        'created_at', 'login_ip', 'updated_at', 'ad_source', 'status',
+        'password', 'sns_id'
     ];
 
     /**

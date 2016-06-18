@@ -15,12 +15,19 @@ class CommonFunc
     /**
      * Generate md5 auth
      *
-     * @param $password
+     * @param        $data 数据
+     * @param string $salt 密钥
      *
      * @return string
      */
-    public static function makeMd5Auth($password)
+    public static function makeMd5Auth($data, $salt = '')
     {
-        return md5(md5($password) . self::$authPasswordSalt);
+        if (empty($salt))
+        {
+            $salt = self::$authPasswordSalt;
+        }
+
+        return md5(md5($data) . $salt);
     }
+
 }
