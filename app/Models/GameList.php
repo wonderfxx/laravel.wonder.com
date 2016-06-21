@@ -58,4 +58,22 @@ class GameList extends Model
     {
         return self::whereGameCode($gid)->first();
     }
+
+    /**
+     * 获取CP专递货币和金额
+     *
+     * @param $gid
+     * @param $game_coins
+     *
+     * @return array
+     */
+    public static function getCpAmountCurrnecy($gid, $game_coins)
+    {
+        $gameInfo = self::getGameInfo($gid);
+
+        return [
+            'amount'   => number_format($game_coins / $gameInfo->proportion_cp, 2, '.', ''),
+            'currency' => $gameInfo->proportion_cp_currency
+        ];
+    }
 }

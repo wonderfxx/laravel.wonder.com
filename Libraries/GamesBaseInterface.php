@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: wonder
@@ -6,7 +7,7 @@
  * Time: 下午7:32
  */
 
-namespace App\Http\Controllers\Web;
+namespace libraries;
 
 use App\Models\User;
 use App\Models\UsersBillingList;
@@ -29,28 +30,11 @@ interface GamesBaseInterface
     /**
      * 实现登陆
      *
-     * @param $info
+     * @param User $info
+     * @param      $server_id
      *
      * @return mixed
      */
-    public function finishLogin(User $info);
-
-    /**
-     * 实现下单
-     *
-     * @param $info
-     *
-     * @return mixed
-     */
-    public function finishPlaced(UsersBillingList $info);
-
-    /**
-     * 实现退款
-     *
-     * @param $info
-     *
-     * @return mixed
-     */
-    public function finishRefund(UsersBillingList $info);
+    public function finishLogin(User $info, $server_id);
 
 }

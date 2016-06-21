@@ -1,9 +1,8 @@
 <?php
 
+namespace libraries;
+
 use App\Models\UsersBillingList;
-use libraries\PaymentRecharge;
-use libraries\PaymentChange;
-use libraries\PaymentStatus;
 
 /**
  *
@@ -16,28 +15,28 @@ class PaymentCore
 {
 
     //平台信息
-    private $fg_order_id;
+    public $fg_order_id;
 
     //渠道信息
-    private $channel_code;
-    private $channel_sub_code;
-    private $channel_amount;
-    private $channel_currency;
+    public $channel_code;
+    public $channel_sub_code;
+    public $channel_amount;
+    public $channel_currency;
 
-    private $channel_order_id;
-    private $channel_phone;
-    private $channel_email;
-    private $channel_pay_time;
+    public $channel_order_id;
+    public $channel_phone;
+    public $channel_email;
+    public $channel_pay_time;
 
     //支付信息,支付,退款,还款
-    private $payment_status;
+    public $payment_status;
 
     //其他
-    private $serial_number;
-    private $is_test_order = false;
+    public $serial_number;
+    public $is_test_order = false;
 
     //返回消息
-    private $status;
+    public $status;
 
     /**
      * 实例化DB对象

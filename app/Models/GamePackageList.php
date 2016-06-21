@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $game_code 游戏简写
  * @property string $country 发布地区
  * @property string $channel_code 渠道简写
+ * @property string $channel_sub_code 子渠道简写
  * @property float $amount 支付金额
  * @property string $currency 支付货币
  * @property string $currency_show 显示货币
@@ -29,6 +30,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\GamePackageList whereGameCode($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\GamePackageList whereCountry($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\GamePackageList whereChannelCode($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\GamePackageList whereChannelSubCode($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\GamePackageList whereAmount($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\GamePackageList whereCurrency($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\GamePackageList whereCurrencyShow($value)
@@ -48,4 +50,5 @@ use Illuminate\Database\Eloquent\Model;
 class GamePackageList extends Model
 {
     //
+    public    $timestamps = false;
 }
