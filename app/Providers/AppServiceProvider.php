@@ -16,8 +16,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
 
-//        \DB::connection()->enableQueryLog();
-//        \Log::info(json_encode(\DB::getQueryLog()));
+        $this->app['request']->server->set('HTTPS', $this->app->environment() != 'local');
+        
 
     }
 

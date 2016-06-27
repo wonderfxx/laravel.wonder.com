@@ -14,12 +14,12 @@
         function showGameBox() {
             console.log("[FT]show game box start");
             var userId = kongregate.services.getUserId();
+            console.log("[FT]service userid: " + userId);
             var authToken = kongregate.services.getGameAuthToken();
-            var params = "?uid=" + userId +
-                    "&gid=" + {{$game_code}} +
-                            "&sid=" + {{$server_id}} +
-                            "&token=" + authToken +
-                    "&random=" + (Math.random() * 1000000000);
+            console.log("[FT]service auth token: " + authToken);
+            var params = "?uid=" + userId + "&gid=" + '{{$game_code}}'
+                    + "&sid=" + '{{$server_id}}' + "&token=" + authToken + "&random=" + (Math.random() * 1000000000);
+            console.log("[FT]params:" + params);
             //跳转到游戏
             location.href = "{{url('/service/kongregate/checkAuth')}}" + params;
         }

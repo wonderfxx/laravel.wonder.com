@@ -59,4 +59,30 @@ class User extends Authenticatable
 
     ];
 
+    /**
+     * 当前表列名称
+     *
+     * @return array
+     */
+    public static function getColumns()
+    {
+        $data   = preg_split("/[\n]+/", (new \ReflectionClass(self::class))->getDocComment());
+        $return = [];
+        foreach ($data as $k => $value)
+        {
+            if (strstr($value, '@property'))
+            {
+                $temp     = preg_split("/[\s]+/", trim(str_replace(' * @property ', '', $value)));
+                $index    = str_replace('$', '', $temp[1]);
+                $return[$index] = [
+                    'field' => $index,
+                    'title' => ($temp[2]),
+                    'align' => 'center',
+                ];
+            }
+        }
+
+        return $return;
+    }
+
 }

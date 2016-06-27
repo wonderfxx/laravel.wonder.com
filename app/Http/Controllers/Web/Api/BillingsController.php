@@ -20,7 +20,6 @@ class BillingsController extends Controller
      */
     public function index()
     {
-        
     }
 
     /**
@@ -44,21 +43,28 @@ class BillingsController extends Controller
     {
         //
         $rules       = [
-            'game_code'  => 'required',
-            'server_id'  => 'required',
-            'user_id'    => 'required',
-            'user_role'  => 'required',
-            'user_grade' => 'required',
-            'product_id' => 'required',
+            'game_code'    => 'required',
+            'server_id'    => 'required',
+            'user_id'      => 'required',
+            'user_role'    => 'required',
+            'user_grade'   => 'required',
+            'product_id'   => 'required',
+            'country'      => 'required',
+            'channel_code' => 'required',
+            'product_type' => 'required',
         ];
         $credentials = [
-            'game_code'    => $request->get('game_code'),
-            'server_id'    => $request->get('server_id'),
-            'user_id'      => $request->get('user_id'),
-            'user_role'    => $request->get('user_role'),
-            'user_role_id' => $request->get('user_role_id') ? $request->get('user_role_id') : 0,
-            'user_grade'   => $request->get('user_grade'),
-            'product_id'   => $request->get('product_id'),
+            'game_code'        => $request->get('game_code'),
+            'server_id'        => $request->get('server_id'),
+            'user_id'          => $request->get('user_id'),
+            'user_role'        => $request->get('user_role'),
+            'user_role_id'     => $request->get('user_role_id') ? $request->get('user_role_id') : 0,
+            'user_grade'       => $request->get('user_grade'),
+            'product_id'       => $request->get('product_id'),
+            'country'          => $request->get('country'),
+            'channel_code'     => $request->get('channel_code'),
+            'channel_sub_code' => $request->get('channel_sub_code'),
+            'product_type'     => $request->get('product_type'),
         ];
 
         // check
@@ -69,7 +75,12 @@ class BillingsController extends Controller
         }
 
         // 验证套餐
-        $billingInfo = GamePackageList::whereProductId($credentials['product_id'])->first();
+        $billingInfo = GamePackageList::whereGameCode($credentials['game_code'])
+                                      ->whereCountry($credentials['country'])
+                                      ->whereChannelCode($credentials['channel_code'])
+                                      ->whereChannelSubCode($credentials['channel_sub_code'])
+                                      ->whereProductId($credentials['product_id'])
+                                      ->first();
         if (!$billingInfo)
         {
             return JsonResponse::create(['product_id' => 'Invalid Product Id.'], 422);
@@ -87,8 +98,12 @@ class BillingsController extends Controller
         $credentials['game_coins']         = $billingInfo->game_coins;
         $credentials['game_coins_rewards'] = $billingInfo->game_coins_rewards;
         $credentials['product_type']       = $billingInfo->product_type;
+        $credentials['package_id']         = $billingInfo->id;
+        $orderInfo                         = UsersBillingList::whereFgOrderId(UsersBillingList::insertGetId($credentials, 'fg_order_id'))
+                                                             ->first();
 
-        return JsonResponse::create(['fg_order_id' => UsersBillingList::insertGetId($credentials, 'fg_order_id')], 200);
+        return JsonResponse::create(['fg_order_id' => $orderInfo->fg_order_id, 'package_id' => $orderInfo->package_id],
+                                    200);
     }
 
     /**

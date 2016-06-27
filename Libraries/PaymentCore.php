@@ -219,7 +219,7 @@ class PaymentCore
         }
         else
         {
-            if (!PaymentRecharge::rechargeApi($orderInfo))
+            if (!UsersBillingList::updateSendStatus($orderInfo->fg_order_id, PaymentRecharge::rechargeApi($orderInfo)))
             {
                 $this->status = PaymentStatus::$paymentStatus['4006'];
             }

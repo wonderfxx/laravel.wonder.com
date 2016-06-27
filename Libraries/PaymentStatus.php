@@ -61,6 +61,48 @@ class PaymentStatus
     ];
 
     /**
+     * 获取发钻订单状态
+     * @return array
+     */
+    public static function getSendCoinsStatus()
+    {
+        return [
+            '2000' => self::$paymentStatus['2000'],
+            '2001' => self::$paymentStatus['2001'],
+            '2002' => self::$paymentStatus['2002'],
+            '2003' => self::$paymentStatus['2003'],
+            '2004' => self::$paymentStatus['2004'],
+            '2005' => self::$paymentStatus['2005'],
+            '2006' => self::$paymentStatus['2006'],
+            '2007' => self::$paymentStatus['2007'],
+            '2008' => self::$paymentStatus['2008'],
+            '2009' => self::$paymentStatus['2009'],
+            '2010' => self::$paymentStatus['2010'],
+            '2011' => self::$paymentStatus['2011'],
+            '2012' => self::$paymentStatus['2012'],
+            '2013' => self::$paymentStatus['2013'],
+        ];
+    }
+
+    /**
+     * 获取支付订单状态
+     * @return array
+     */
+    public static function getPayStatus()
+    {
+        return [
+            '3000' => self::$paymentStatus['3000'],
+            '3001' => self::$paymentStatus['3001'],
+            '3002' => self::$paymentStatus['3002'],
+            '3003' => self::$paymentStatus['3003'],
+            '3004' => self::$paymentStatus['3004'],
+            '3005' => self::$paymentStatus['3005'],
+            '3006' => self::$paymentStatus['3006'],
+            '3007' => self::$paymentStatus['3007'],
+        ];
+    }
+
+    /**
      * 支付成功
      * @return array
      */

@@ -62,9 +62,15 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingList whereSendTime($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingList whereIsTest($value)
  * @mixin \Eloquent
+ * @property integer $updated_time       变更时间
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingList whereUpdatedTime($value)
+ * @property integer $package_id         套餐编号
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingList wherePackageId($value)
  */
 class UsersBillingList extends Model
 {
+
+    public $timestamps = false;
 
     /**
      *  变更订单状态
@@ -100,5 +106,36 @@ class UsersBillingList extends Model
                                 'send_coins_status' => $status,
                                 'send_time'         => time(),
                             ]);
+    }
+
+    /**
+     * 当前表列名称
+     *
+     * @return array
+     */
+    public static function getColumns()
+    {
+        $data   = preg_split("/[\n]+/", (new \ReflectionClass(self::class))->getDocComment());
+        $return = [];
+        foreach ($data as $k => $value)
+        {
+            if (strstr($value, '@property'))
+            {
+                $temp           = preg_split("/[\s]+/", trim(str_replace(' * @property ', '', $value)));
+                $index          = str_replace('$', '', $temp[1]);
+                $return[$index] = [
+                    'field' => $index,
+                    'title' => ($temp[2]),
+                    'align' => 'center',
+                ];
+            }
+        }
+        $return['operation'] = [
+            'field' => 'operation',
+            'title' => '操作',
+            'align' => 'center',
+        ];
+
+        return $return;
     }
 }

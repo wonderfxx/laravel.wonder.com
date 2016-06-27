@@ -1,4 +1,5 @@
 @extends('admin.common.frame')
+@section('body_style_class','gray-bg mini-navbar pace-done')
 @section('header')
     <link href="/assets/css/plugins/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
     <link href="/assets/css/plugins/chosen/chosen.css" rel="stylesheet">
@@ -9,7 +10,7 @@
     <div class="wrapper wrapper-content animated fadeInRight">
         <div class="ibox float-e-margins">
             <div class="ibox-title">
-                <h5>左侧菜单管理</h5>
+                <h5>子菜单管理</h5>
             </div>
             <div class="ibox-content">
                 <div class="row row-lg">
@@ -18,9 +19,10 @@
                             <div class="form-group">
                                 <select class="form-control chosen-select" id="menu_parent_id" name="menu_parent_id">
                                     <option value="0">请选择父级菜单</option>
-                                    {!-foreach from=$menu_parents item=value key=k-!}
-                                    <option value="{!-$k-!}">{!-$value.name-!}</option>
-                                    {!-/foreach-!} </select>
+                                    @foreach($data  as $item)
+                                        <option value="{!!$item->id!!}">{!! $item->menu_name !!}</option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div class="form-group">
                                 <select class="form-control chosen-select " id="menu_status" name="menu_status">
@@ -30,19 +32,16 @@
                                 </select>
                             </div>
                             <button class="btn btn-sm btn-success" type="button" id='searchButton'
-                                    style="margin-bottom: 0;margin-left:10px;">查询
+                                    style="margin-bottom: 0;margin-left:10px;">菜单查询
                             </button>
                         </form>
-                        {!!  !!}
-                        {!-if $is_add_permission-!}
                         <div class="btn-group hidden-xs" id="dataTableLabelToolbar" role="group">
                             <button type="button" class="btn btn-primary " data-toggle="modal" data-target="#myModal"
-                                    href="/admin/menu/index?act=add">
+                                    href="/adm/menu/create">
                                 <i class="glyphicon glyphicon-plus " aria-hidden="true"></i>
                             </button>
                         </div>
-                        {!-/if-!}
-                        <table id="dataTableLabel" data-show-columns="true" data-height="550"
+                        <table id="dataTableLabel" data-show-columns="true"
                                data-mobile-responsive="true"></table>
                     </div>
                     <div class="clearfix hidden-xs"></div>
@@ -65,10 +64,8 @@
     <script src="/assets/js/plugins/chosen/chosen.jquery.js"></script>
     <script src="/assets/js/plugins/sweetalert/sweetalert.min.js"></script>
     <script type="text/javascript">
-        var columns = {
-        !-$headers - !
-        },
-        tableHandler = $('#dataTableLabel');
+        var columns = {!! $headers !!},
+                tableHandler = $('#dataTableLabel');
         $(document).ready(function () {
 
             // 选择插件
@@ -79,17 +76,16 @@
 
                 // server
                 sidePagination: "server", //服务端请求
-                method: 'post',
+                method: 'get',
                 dataType: "json",
-                contentType: "application/x-www-form-urlencoded",
-                url: "/admin/menu/getData",
+                url: "/adm/page/menu",
                 queryParams: queryParams,
                 responseHandler: responseHandler,
 
                 // page
                 pagination: true,
                 queryParamsType: "pageSize,pageNumber,menu_status,menu_parent_id",
-                pageSize: 9,
+                pageSize: 10,
                 pageNumber: 1,
                 pageList: [],
 
@@ -130,7 +126,9 @@
             $("#myModal").on("hidden.bs.modal", function () {
                 $(this).removeData("bs.modal");
             });
+
         });
+
 
         //删除
         function delMenu(ids) {
@@ -145,16 +143,23 @@
                 closeOnConfirm: false
             }, function () {
                 $.ajax({
-                    url: '/admin/menu/deleteAction',
+                    url: '/adm/menu/' + ids,
                     type: 'post',
                     dataType: 'json',
-                    data: {menu_id: ids},
-                    success: function (data) {
-                        if (data.status == 'OK') {
-                            swal("删除成功！", "您已经永久删除了这条信息。", "success");
-                            $('#searchButton').click();
-                        } else { //删除失败
-                            swal("删除失败！", "删除失败了，请重新尝试。", "error");
+                    data: {'_method': 'DELETE', '_token': '{!! csrf_token() !!}'},
+                    success:function () {
+                        swal("删除成功！", "您已经永久删除了这条信息。", "success");
+                        $('#searchButton').click();
+                    },
+                    error: function (data) { // the data parameter here is a jqXHR instance
+                        var errors = data.responseJSON;
+                        switch (data.status) {
+                            case 422:
+                                swal("删除失败！", errors.error + "，请重新尝试。", "error");
+                                break;
+                            default:
+                                swal("删除成功！", "您已经永久删除了这条信息。", "success");
+                                $('#searchButton').click();
                         }
                     }
                 });
@@ -164,8 +169,8 @@
         //接受返回参数
         function responseHandler(resultStr) {
             return {
-                "rows": resultStr.records,
-                "total": resultStr.totalCount
+                "rows": resultStr.data,
+                "total": resultStr.total
             }
         }
 

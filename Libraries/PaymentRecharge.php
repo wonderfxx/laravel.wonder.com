@@ -14,25 +14,16 @@ class PaymentRecharge
 {
 
     /**
-     * 发钻中间处理
-     *
+     * 发钻处理
      * @param UsersBillingList $orderInfo
      *
-     * @return bool
+     * @return mixed
      */
-    public static function rechargeApi(UsersBillingList $orderInfo = array())
+    public static function rechargeApi(UsersBillingList $orderInfo)
     {
 
         $gameInfoApi = new \ReflectionClass('App\Http\Controllers\Web\Games\\' . ucfirst($orderInfo->game_code) . 'InitController');
-        if (UsersBillingList::updateSendStatus(
-            $orderInfo->fg_order_id,
-            $gameInfoApi->newInstance()->finishRecharge($orderInfo)))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+
+        return $gameInfoApi->newInstance()->finishRecharge($orderInfo);
     }
 }

@@ -1,6 +1,8 @@
 <?php
 
+use App\Models\GamePackageList;
 use database\seeds\GameListSeeder;
+use database\seeds\GamePackageListSeeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -12,8 +14,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-//         $this->call(GamePackageListSeeder::class);
-        $this->call(GameListSeeder::class);
+         $this->call(GamePackageListSeeder::class);
+//        $this->call(GameListSeeder::class);
     }
 }
  

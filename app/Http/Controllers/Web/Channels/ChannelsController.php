@@ -14,15 +14,12 @@ class ChannelsController extends Controller
 {
 
     /**
-     * 游戏页面
-     *
      * @param $channel
      *
      * @return mixed
      */
     public function initCallback($channel)
     {
-
         return (new \ReflectionClass('App\Http\Controllers\Web\Channels\\' . ucfirst($channel) . 'Controller'))
             ->newInstance()
             ->initCallback();

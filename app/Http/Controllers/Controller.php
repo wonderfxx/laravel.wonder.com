@@ -12,9 +12,18 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, AuthorizesResources, DispatchesJobs, ValidatesRequests;
 
-
     public function post()
     {
+    }
 
+    /**
+     * 设置记录日志的地址
+     *
+     * @param        $filename
+     * @param string $logDirName
+     */
+    public function setLogPath($filename, $logDirName = 'channels')
+    {
+        \Log::useDailyFiles(storage_path() . '/logs/' . $logDirName . '/' . date('Ymd', time()) . '/' . $filename);
     }
 }

@@ -28,8 +28,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereCreatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property string $remember_token
- * @property string $api_token
+ * @property string         $remember_token
+ * @property string         $api_token
  * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereRememberToken($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereApiToken($value)
  */
@@ -47,7 +47,7 @@ class AdmUser extends Authenticatable
     protected $fillable = [
         'username', 'email', 'register_ip',
         'created_at', 'login_ip', 'updated_at', 'remember', 'status',
-        'password', 'remember_token','api_token'
+        'password', 'remember_token', 'api_token'
     ];
 
     /**
@@ -58,5 +58,35 @@ class AdmUser extends Authenticatable
     protected $hidden = [
 
     ];
+
+    /**
+     * 当前表列名称
+     *
+     * @return array
+     */
+    public static function getColumns()
+    {
+        $data   = preg_split("/[\n]+/", (new \ReflectionClass(self::class))->getDocComment());
+        $filter = ['userid', 'username', 'email', 'register_ip', 'login_ip', 'status', 'updated_at', 'created_at'];
+        $return = [];
+        foreach ($data as $k => $value)
+        {
+            if (strstr($value, '@property'))
+            {
+                $temp = preg_split("/[\s]+/", trim(str_replace(' * @property ', '', $value)));
+                if (!in_array(str_replace('$', '', $temp[1]), $filter))
+                {
+                    continue;
+                }
+                $return[] = [
+                    'field' => str_replace('$', '', $temp[1]),
+                    'title' => empty($temp[2]) ? str_replace('$', '', $temp[1]) : $temp[2],
+                    'align' => 'center',
+                ];
+            }
+        }
+
+        return $return;
+    }
 
 }

@@ -10,7 +10,7 @@ use libraries\CommonFunc;
 
 class KongregateServiceController extends Controller
 {
-    private $authApi = 'https://api.kongregate.com/api/authenticate.json';
+    private $authApi = 'https://www.kongregate.com/api/authenticate.json';
 
     /**
      * 同步登陆
@@ -20,13 +20,14 @@ class KongregateServiceController extends Controller
     public function checkAuth()
     {
 
-        $credentials    = [
+        $credentials = [
             'gid'   => Input::get('gid'),
             'sid'   => Input::get('sid'),
             'uid'   => Input::get('uid'),
             'token' => Input::get('token'),
         ];
-        $gameServerInfo = GameServerList::whereGameCode($credentials['gid'])->whereServerId($credentials['sid']);
+
+        $gameServerInfo = GameServerList::whereGameCode($credentials['gid'])->whereServerId($credentials['sid'])->first();
         $isLogin        = $this->getUserAuth($credentials['uid'], $credentials['token'], $gameServerInfo->kongregate_api_key);
         if ($isLogin)
         {
@@ -76,7 +77,7 @@ class KongregateServiceController extends Controller
 
         $result = CommonFunc::curlRequest($this->authApi
                                           . "?user_id=$user_id&game_auth_token=$game_auth_token&api_key=$api_key");
-        $result = \GuzzleHttp\json_decode($result, true);
+        $result = json_decode($result, true);
         if ($result['success'])
         {
             return [
@@ -86,7 +87,7 @@ class KongregateServiceController extends Controller
         }
         else
         {
-            return false;
+            return $result;
         }
     }
 

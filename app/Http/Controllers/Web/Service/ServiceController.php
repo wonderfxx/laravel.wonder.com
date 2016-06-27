@@ -15,7 +15,7 @@ class ServiceController extends Controller
 
     /**
      * 服务请求
-     * 
+     *
      * @param $service
      * @param $action
      *
@@ -25,7 +25,7 @@ class ServiceController extends Controller
     {
 
         return (new \ReflectionClass('App\Http\Controllers\Web\Service\\' . ucfirst($service) . 'ServiceController'))
-            ->newInstance()->getMethod($action);
+            ->newInstance()->$action();
     }
 
 }

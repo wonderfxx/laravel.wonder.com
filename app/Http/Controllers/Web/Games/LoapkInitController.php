@@ -6,17 +6,16 @@ use App\Http\Controllers\Controller;
 use App\Models\GameList;
 use App\Models\User;
 use App\Models\UsersBillingList;
-use Illuminate\Support\Facades\Auth;
 use libraries\CommonFunc;
 use libraries\GamesBaseInterface;
 
 class LoapkInitController extends Controller implements GamesBaseInterface
 {
 
-    private $loginApi = 'http://loapk{$}.fingertactic.com/?';
+    private $loginApi = 'https://loapk{$}.fingertactic.com/?';
     private $loginKey = '0kuZ^B*9tpG+=8^y';
 
-    private $rechargeApi = 'http://loapk{$}.fingertactic.com/payapi.php?do=PayKongreGate';
+    private $rechargeApi = 'https://loapk{$}.fingertactic.com/payapi.php?do=PayKongreGate';
     private $rechargeKey = '1#C*-VMsUEGs1t*(';
 
     private $isOpenCpConvert = false;

@@ -3,16 +3,13 @@
 namespace App\Http\Controllers\Admin\Home;
 
 use Illuminate\Http\Request;
-
-use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 class WelcomeController extends Controller
 {
     /**
-     * Create a new controller instance.
-     *
-     * @return void
+     * 
+     * WelcomeController constructor.
      */
     public function __construct()
     {

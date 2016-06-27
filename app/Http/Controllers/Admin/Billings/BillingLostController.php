@@ -1,0 +1,170 @@
+<?php
+
+namespace App\Http\Controllers\Admin\Billings;
+
+use App\Models\UsersBillingList;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Input;
+use libraries\PaymentRecharge;
+use libraries\PaymentStatus;
+use Symfony\Component\HttpFoundation\JsonResponse;
+
+class BillingLostController extends Controller
+{
+    public $filter = ['fg_order_id', 'game_code', 'channel_code', 'channel_order_id', 'channel_pay_time',
+                      'channel_status', 'created_time', 'send_coins_status', 'send_time'];
+
+    /**
+     * UserController constructor.
+     */
+    public function __construct()
+    {
+        $this->middleware('admin');
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        $columns = UsersBillingList::getColumns();
+        $return  = [];
+
+        foreach ($columns as $val)
+        {
+            if (in_array($val['field'], $this->filter))
+            {
+                $return[] = $val;
+            }
+        }
+        $return[] = [
+            'field' => 'operation',
+            'title' => '补发订单',
+            'align' => 'center',
+        ];
+
+        return view('admin.billings.lost', [
+            'headers'    => json_encode($return),
+        ]);
+    }
+
+    /**
+     * 订单补发
+     *
+     * @return \Symfony\Component\HttpFoundation\Response|static
+     */
+    public function resend()
+    {
+
+        $fg_order_id = Input::get('order_id');
+        $orderInfo   = UsersBillingList::whereFgOrderId($fg_order_id)->first();
+        $status      = PaymentRecharge::rechargeApi($orderInfo);
+        UsersBillingList::updateSendStatus($orderInfo->fg_order_id, $status);
+
+        if (in_array($status, PaymentStatus::getRechargeSuccess()))
+        {
+            return JsonResponse::create(['st' => 'OK', 'msg' => '补发成功'], 200);
+        }
+        else
+        {
+            return JsonResponse::create(['st' => 'NO', 'msg' => PaymentStatus::$paymentStatus[$status]], 302);
+        }
+    }
+
+    /**
+     * 处理分页
+     *
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
+    public function page()
+    {
+
+        //search
+        $fg_order_id      = Input::get('fg_order_id');
+        $channel_order_id = Input::get('channel_order_id');
+        $user_id          = Input::get('user_id');
+        $channel_status   = Input::get('channel_status');
+
+        //get data
+        $handler = new UsersBillingList();
+        $result  = $handler
+            ->when($fg_order_id, function ($query) use ($fg_order_id)
+            {
+                if ($fg_order_id)
+                {
+                    return $query->whereFgOrderId($fg_order_id);
+                }
+                else
+                {
+                    return $query;
+                }
+            })
+            ->when($channel_order_id, function ($query) use ($channel_order_id)
+            {
+                if ($channel_order_id)
+                {
+                    return $query->whereChannelOrderId($channel_order_id);
+                }
+                else
+                {
+                    return $query;
+                }
+            })
+            ->when($user_id, function ($query) use ($user_id)
+            {
+                if ($user_id)
+                {
+                    return $query->whereUserId($user_id);
+                }
+                else
+                {
+                    return $query;
+                }
+            })
+            ->whereNotIn('send_coins_status', PaymentStatus::getRechargeSuccess())
+            ->whereIn('channel_status', PaymentStatus::getPaySuccess())
+            ->paginate(
+                Input::get('pageSize'),
+                $this->filter,
+                'page',
+                Input::get('pageNumber')
+            );
+        foreach ($result->items() as $items)
+        {
+            $items->operation        = '<a class="btn btn-danger fa fa-mail-forward"  
+            href="javascript:resend(' . $items->fg_order_id . ')">补发</a>';
+            $items->fg_order_id      = '<b>' . $items->fg_order_id . '</b>';
+            $items->channel_order_id = '<b>' . $items->channel_order_id . '</b>';
+            if (key_exists($items->send_coins_status, PaymentStatus::$paymentStatus))
+            {
+                if (in_array($items->send_coins_status, PaymentStatus::getRechargeSuccess()))
+                {
+                    $items->send_coins_status = '<span class="label label-primary">' . PaymentStatus::$paymentStatus[$items->send_coins_status] . '</span>';
+                }
+                else
+                {
+                    $items->send_coins_status = '<span class="label label-danger">' . PaymentStatus::$paymentStatus[$items->send_coins_status] . '</span>';
+                }
+            }
+            if (key_exists($items->channel_status, PaymentStatus::$paymentStatus))
+            {
+                if (in_array($items->channel_status, PaymentStatus::getPaySuccess()))
+                {
+                    $items->channel_status = '<span class="label label-primary">' . PaymentStatus::$paymentStatus[$items->channel_status] . '</span>';
+                }
+                else
+                {
+                    $items->channel_status = '<span class="label label-danger">' . PaymentStatus::$paymentStatus[$items->channel_status] . '</span>';
+                }
+            }
+
+            $items->created_time     = $items->created_time == '0' ? '-' : date('Y-m-d H:i', $items->created_time);
+            $items->channel_pay_time = $items->channel_pay_time == '0' ? '-' : date('Y-m-d H:i', $items->channel_pay_time);
+            $items->send_time        = $items->send_time == '0' ? '-' : date('Y-m-d H:i', $items->send_time);
+        }
+
+        return $result;
+    }
+}
