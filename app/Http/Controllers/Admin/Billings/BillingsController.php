@@ -10,9 +10,9 @@ use libraries\PaymentStatus;
 
 class BillingsController extends Controller
 {
-    public $filter = ['fg_order_id', 'game_code', 'channel_code', 'channel_order_id', 'channel_pay_time',
-                      'channel_status', 'user_id', 'user_ip_address', 'amount', 'currency', 'game_coins',
-                      'game_coins_rewards', 'created_time', 'send_coins_status', 'send_time'];
+    public $filter = ['fg_order_id', 'game_code', 'channel_code', 'channel_order_id',
+                      'channel_status', 'user_id', 'amount', 'currency', 'game_coins'
+                      , 'created_time', 'send_coins_status', 'send_time'];
 
     /**
      * UserController constructor.

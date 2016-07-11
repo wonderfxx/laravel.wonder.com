@@ -58,9 +58,13 @@ class KongregateServiceController extends Controller
                                  'created_at'  => time(),
                              ]);
             }
-        }
 
-        return redirect('/games/' . $credentials['gid'] . '/' . $credentials['sid']);
+            return \Redirect::to('/games/' . $credentials['gid'] . '/' . $credentials['sid'])->with('isLogin', true);
+        }
+        else
+        {
+            return \Redirect::to('/games/' . $credentials['gid'] . '/' . $credentials['sid'])->with('isLogin', false);
+        }
     }
 
     /**
@@ -87,7 +91,7 @@ class KongregateServiceController extends Controller
         }
         else
         {
-            return $result;
+            return false;
         }
     }
 

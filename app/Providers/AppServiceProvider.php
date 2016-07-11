@@ -2,8 +2,6 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -16,9 +14,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
 
+        header('P3P', 'CP="IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS"');
+
         $this->app['request']->server->set('HTTPS', $this->app->environment() != 'local');
         
-
     }
 
     /**

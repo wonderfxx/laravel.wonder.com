@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Web\Games;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Session;
+use Request;
 use App\Models\GameList;
 use App\Models\User;
 use App\Models\UsersBillingList;
@@ -30,21 +32,19 @@ class LoapkInitController extends Controller implements GamesBaseInterface
      */
     public function play($sid)
     {
-
-        if (\Auth::guard()->check())
+        $isLogin = Session::get('isLogin') ? true : false;
+        if ($isLogin && \Auth::guard()->check())
         {
-            $url = $this->finishLogin(\Auth::guard()->user(), $sid);
+            return redirect($this->finishLogin(\Auth::guard()->user(), $sid));
         }
         else
         {
-            $url = '';//$this->finishLogin(User::first(), $sid),
+            return view('web.games.' . $this->game_code, [
+                'url_address' => '',
+                'game_code'   => $this->game_code,
+                'server_id'   => $sid
+            ]);
         }
-
-        return view('web.games.' . $this->game_code, [
-            'url_address' => $url,
-            'game_code'   => $this->game_code,
-            'server_id'   => $sid
-        ]);
     }
 
     /**
@@ -75,7 +75,8 @@ class LoapkInitController extends Controller implements GamesBaseInterface
             'gold'      => $info->game_coins + $info->game_coins_rewards,
         ];
         $requestData['sign'] = md5($requestData['puid'] . $requestData['serverid'] . $requestData['orderid']
-                                   . $requestData['productid'] . $requestData['money'] . $this->rechargeKey);
+                                   . $requestData['productid'] . $requestData['money'] . $requestData['gold']
+                                   . $this->rechargeKey);
         $result              = CommonFunc::curlRequest(str_replace('{$}', $requestData['serverid'], $this->rechargeApi), $requestData);
         switch ($result)
         {

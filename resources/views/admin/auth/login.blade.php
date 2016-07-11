@@ -121,7 +121,7 @@
                         dataType: "json",
                         data: param,
                         success:function (data) {
-                            location.href = '{!! url('adm/') !!}';
+                            top.location.href = '{!! url('adm/') !!}';
                         },
                         error: function (data) { // the data parameter here is a jqXHR instance
                             var errors = data.responseJSON;
@@ -140,10 +140,8 @@
                                     }
                                     break;
                                 case 302:
-                                    location.href = '{!! url('adm/verify') !!}';
-                                    break;
                                 case 200:
-                                    //location.href = '{!! url('adm/') !!}';
+                                    top.location.href = '{!! url('adm/verify') !!}';
                                     break;
                                 default:
                                     alert('登陆超时,请重试。');
