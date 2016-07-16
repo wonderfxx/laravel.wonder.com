@@ -24,6 +24,6 @@ class Controller extends BaseController
      */
     public function setLogPath($filename, $logDirName = 'channels')
     {
-        \Log::useDailyFiles(storage_path() . '/logs/' . $logDirName . '/' . date('Ymd', time()) . '/' . $filename);
+        \Log::useDailyFiles(storage_path() . '/logs/' . date('Ymd', time()) . '/' . $filename);
     }
 }

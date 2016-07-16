@@ -21,7 +21,11 @@
             margin: 0;
             padding: 0;
         }
-
+        .login{
+            width: 950px;
+            height: 600px;
+            display: block;
+        }
         .game_content {
             top: 0;
             left: 0;
@@ -29,6 +33,7 @@
             height: 600px;
             border: none;
             position: absolute;
+            display: none;
         }
 
         .iframe {
@@ -60,7 +65,7 @@
                 'onscroll="function(e){e.preventDefault();}" ' +
                 'class="iframe" ' +
                 'src="' + gameUrl + '"></iframe>';
-        $('#game_content').html(iframe);
+        $('#game_content').show().html(iframe);
         console.log("[FT]Playing");
     }
     function onLoadCompleted() {
@@ -70,7 +75,9 @@
         console.log("[FT]userid: " + userId);
         if (userId == 0) {
             kongregate.services.addEventListener("login", showGameBox);
-            $('#login').show();
+            $('#login').show().click(function () {
+                kongregate.services.showSignInBox();
+            });
         } else {
             showGameBox();
         }
@@ -112,9 +119,9 @@
     kongregateAPI.loadAPI(onLoadCompleted);
     console.log("[FT]script end");
 </script>
-<a id='login' style="display: none"
+<a id='login' class="login" style="display: none"
    title="Login to Kongregate to play the game!"
-   href="javascript:kongregate.services.showSignInBox();">
+   href="javascript:void(0);">
     <img src="/assets/img/guest/{{$game_code}}.png?v=1" />
 </a>
 <div id="game_content" class="game_content">

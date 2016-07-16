@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Web\Games;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Session;
-use Request;
 use App\Models\GameList;
 use App\Models\User;
 use App\Models\UsersBillingList;
@@ -26,13 +24,14 @@ class LoapkInitController extends Controller implements GamesBaseInterface
     /**
      * 初始化游戏
      *
-     * @param int $sid
+     * @param $sid
+     * @param $isLogin
      *
-     * @return mixed
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector|\Illuminate\View\View
      */
-    public function play($sid)
+    public function play($sid, $isLogin)
     {
-        $isLogin = Session::get('isLogin') ? true : false;
+
         if ($isLogin && \Auth::guard()->check())
         {
             return redirect($this->finishLogin(\Auth::guard()->user(), $sid));
@@ -103,6 +102,8 @@ class LoapkInitController extends Controller implements GamesBaseInterface
             default:
                 $status = 2010;
         }
+
+        //记录日志
 
         return $status;
     }

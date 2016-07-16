@@ -3,14 +3,18 @@
 namespace App\Http\Controllers\Web\Service;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Web\Games\PlayController;
 use App\Models\GameServerList;
 use App\Models\User;
 use Illuminate\Support\Facades\Input;
 use libraries\CommonFunc;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class KongregateServiceController extends Controller
 {
-    private $authApi = 'https://www.kongregate.com/api/authenticate.json';
+    private $authApi      = 'https://www.kongregate.com/api/authenticate.json';
+    private $statisticApi = 'https://api.kongregate.com/api/submit_statistics.json';
+    private $statisticKey = 'ZsRtm5Ya3.Q&MHm!M';
 
     /**
      * 同步登陆
@@ -20,13 +24,12 @@ class KongregateServiceController extends Controller
     public function checkAuth()
     {
 
-        $credentials = [
+        $credentials    = [
             'gid'   => Input::get('gid'),
             'sid'   => Input::get('sid'),
             'uid'   => Input::get('uid'),
             'token' => Input::get('token'),
         ];
-
         $gameServerInfo = GameServerList::whereGameCode($credentials['gid'])->whereServerId($credentials['sid'])->first();
         $isLogin        = $this->getUserAuth($credentials['uid'], $credentials['token'], $gameServerInfo->kongregate_api_key);
         if ($isLogin)
@@ -59,11 +62,60 @@ class KongregateServiceController extends Controller
                              ]);
             }
 
-            return \Redirect::to('/games/' . $credentials['gid'] . '/' . $credentials['sid'])->with('isLogin', true);
+            return PlayController::getInstance()->play($credentials['gid'], $credentials['sid'], true);
         }
         else
         {
-            return \Redirect::to('/games/' . $credentials['gid'] . '/' . $credentials['sid'])->with('isLogin', false);
+            return PlayController::getInstance()->play($credentials['gid'], $credentials['sid']);
+        }
+    }
+
+    /**
+     * 提交数据
+     *
+     * @return mixed
+     */
+    public function reportData()
+    {
+
+        //获取参数
+        $credentials = [
+            'gid'    => Input::get('gid'),
+            'sid'    => Input::get('sid'),
+            'uid'    => Input::get('uid'),
+            'grade'  => Input::get('grade'),
+            'loaded' => Input::get('loaded'),
+            'coins'  => Input::get('coins'),
+        ];
+
+        //安全校验
+        $sign = md5(md5($credentials['uid'] . $credentials['sid'] . $credentials['gid'] . $credentials['grade']
+                        . $credentials['loaded']
+                        . $credentials['coins']) . $this->statisticKey);
+        if (Input::get('sign') != $sign)
+        {
+            return JsonResponse::create(['status' => 'failed'], 200);
+        }
+
+        //获取真实的SNS ID
+        $userInfo           = User::whereUserid($credentials['uid'])->first();
+        $credentials['uid'] = $userInfo->sns_id;
+
+        //获取数据
+        $data[$credentials['gid'] . '-s' . $credentials['sid'] . '-user-grade']  = $credentials['grade'];
+        $data[$credentials['gid'] . '-s' . $credentials['sid'] . '-user-loaded'] = $credentials['loaded'];
+        $data[$credentials['gid'] . '-s' . $credentials['sid'] . '-user-coins']  = $credentials['coins'];
+
+        $gameServerInfo = GameServerList::whereGameCode($credentials['gid'])->whereServerId($credentials['sid'])->first();
+        $isReported     = $this->submitGameData($credentials['uid'], $gameServerInfo->kongregate_api_key, $data);
+        if ($isReported)
+        {
+
+            return JsonResponse::create(['status' => 'success'], 200);
+        }
+        else
+        {
+            return JsonResponse::create(['status' => 'failed'], 200);
         }
     }
 
@@ -76,7 +128,7 @@ class KongregateServiceController extends Controller
      *
      * @return array|bool
      */
-    public function getUserAuth($user_id, $game_auth_token, $api_key)
+    private function getUserAuth($user_id, $game_auth_token, $api_key)
     {
 
         $result = CommonFunc::curlRequest($this->authApi
@@ -95,4 +147,34 @@ class KongregateServiceController extends Controller
         }
     }
 
+    /**
+     * 提交统计数据
+     *
+     * @param $user_id
+     * @param $api_key
+     * @param $statistic_data
+     *
+     * @return bool
+     */
+    private function submitGameData($user_id, $api_key, $statistic_data)
+    {
+
+        $data            = $statistic_data;
+        $data['user_id'] = $user_id;
+        $data['api_key'] = $api_key;
+        $result          = CommonFunc::curlRequest($this->statisticApi, $data);
+        $result          = json_decode($result, true);
+
+        //记录日日志
+        CommonFunc::writeCurlLog($data, 'reportData');
+
+        if ($result['success'])
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 }

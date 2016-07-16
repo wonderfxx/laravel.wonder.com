@@ -214,11 +214,13 @@ class CommonFunc
     /**
      * 记录日志
      *
-     * @param array $data
+     * @param array  $data
+     * @param string $filename
      */
-    public static function writeCurlLog($data = array())
+    public static function writeCurlLog($data = array(), $filename = 'curl')
     {
-        \Log::info('curl info:', $data);
+        \Log::useDailyFiles(storage_path() . '/logs/' . date('Ymd', time()) . '/' . $filename);
+        \Log::info('', $data);
     }
 
     /**

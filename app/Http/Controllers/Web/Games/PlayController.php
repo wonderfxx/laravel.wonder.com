@@ -12,20 +12,37 @@ use App\Http\Controllers\Controller;
 
 class PlayController extends Controller
 {
+    public static $instance;
 
     /**
-     * 渲染游戏页面
+     * @return PlayController
+     */
+    public static function getInstance()
+    {
+        if (!is_null(self::$instance) && is_object(self::$instance))
+        {
+            return self::$instance;
+        }
+        self::$instance = new PlayController();
+
+        return self::$instance;
+    }
+    
+    /**
+     *  渲染游戏页面
      *
-     * @param     $gid
-     * @param int $sid
+     * @param      $gid
+     * @param int  $sid
+     * @param bool $isLogin
      *
      * @return mixed
      */
-    public function play($gid, $sid = 1)
+    public function play($gid, $sid = 1, $isLogin = false)
     {
 
         return (new \ReflectionClass('App\Http\Controllers\Web\Games\\' . ucfirst($gid) . 'InitController'))
             ->newInstance()
-            ->play($sid);
+            ->play($sid, $isLogin);
     }
+
 }
