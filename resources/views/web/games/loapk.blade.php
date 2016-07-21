@@ -122,7 +122,7 @@
 <a id='login' class="login" style="display: none"
    title="Login to Kongregate to play the game!"
    href="javascript:void(0);">
-    <img src="/assets/img/guest/{{$game_code}}.png?v=1" />
+    <img src="/assets/img/guest/{{$game_code}}.jpg?v=2" width="950px" height="600px"/>
 </a>
 <div id="game_content" class="game_content">
 </div>
