@@ -14,10 +14,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
 
-        header('P3P', 'CP="IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS"');
+        header('P3P', 'CP="IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT"');
 
         $this->app['request']->server->set('HTTPS', $this->app->environment() != 'local');
-        
     }
 
     /**

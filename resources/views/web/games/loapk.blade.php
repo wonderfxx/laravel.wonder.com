@@ -92,7 +92,7 @@
             'product_type': 'normal',
             'user_id': user_id,
             'server_id': server_id,
-            'product_id': product_id[0],
+            'product_id': product_id,
             'user_role': user_role,
             'user_role_id': user_role_id,
             'user_grade': user_grade,
