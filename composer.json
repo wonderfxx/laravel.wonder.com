@@ -14,7 +14,8 @@
     "barryvdh/laravel-ide-helper": "^2.1",
     "doctrine/dbal": "^2.5",
     "laravelcollective/html": "^5.2",
-    "kbwebs/multiauth": "^1.0"
+    "kbwebs/multiauth": "^1.0",
+    "sinergi/browser-detector": "^6.0"
   },
   "require-dev": {
     "fzaninotto/faker": "~1.4",

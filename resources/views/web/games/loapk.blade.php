@@ -45,6 +45,27 @@
             width: 100%;
             height: 600px;
         }
+        .game_notice{
+            position: absolute;
+            z-index: 200;
+            width:600px;
+            height: 165px;
+            top: 150px;
+            padding: 10px 15px;
+            left: 175px;
+            background: #ebf5ff;
+            font-family: "Lucida Grande",Verdana,sans-serif;
+            line-height: 1.5;
+            font-size: 18px;
+            font-weight: bold;
+            color: #000;
+            display: block;
+            border: 1px solid #FFF;
+            border-radius: 5px
+        }
+        .game_notice .notice_close{position: absolute;right: 35px;top: 5px;width: 20px;height: 20px;display: block;
+            font-size: 16px;color:#000;}
+        .game_notice a.game_link{color: #900;font-size: 18px}
     </style>
 <body>
 <script type='text/javascript'>
@@ -118,6 +139,9 @@
     }
     kongregateAPI.loadAPI(onLoadCompleted);
     console.log("[FT]script end");
+    function close() {
+        document.getElementById('game_notice').style.display = 'none';
+    }
 </script>
 <a id='login' class="login" style="display: none"
    title="Login to Kongregate to play the game!"
@@ -126,5 +150,16 @@
 </a>
 <div id="game_content" class="game_content">
 </div>
+@if($is_safari_browser)
+<div class="game_notice" id="game_notice">
+    <a class="notice_close" href="javascript:close();">close</a>
+    <p>
+        Sorry, due to Safari default privacy setting, your current version may not be able to play the game, please
+    upgrade your Safari to the latest version or readjust your privacy cookie setting to play the game. Here is the
+        way to adjust the privacy cookie setting:
+        <a href="http://goo.gl/k9JLhB" class="game_link" target="_blank">http://goo.gl/k9JLhB</a>
+    </p>
+</div>
+@endif
 </body>
 </html>
