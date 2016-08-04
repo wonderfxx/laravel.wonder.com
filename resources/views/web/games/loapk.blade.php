@@ -139,9 +139,6 @@
     }
     kongregateAPI.loadAPI(onLoadCompleted);
     console.log("[FT]script end");
-    function close() {
-        document.getElementById('game_notice').style.display = 'none';
-    }
 </script>
 <a id='login' class="login" style="display: none"
    title="Login to Kongregate to play the game!"
@@ -150,16 +147,5 @@
 </a>
 <div id="game_content" class="game_content">
 </div>
-@if($is_safari_browser)
-<div class="game_notice" id="game_notice">
-    <a class="notice_close" href="javascript:close();">close</a>
-    <p>
-        Sorry, due to Safari default privacy setting, your current version may not be able to play the game, please
-    upgrade your Safari to the latest version or readjust your privacy cookie setting to play the game. Here is the
-        way to adjust the privacy cookie setting:
-        <a href="http://goo.gl/k9JLhB" class="game_link" target="_blank">http://goo.gl/k9JLhB</a>
-    </p>
-</div>
-@endif
 </body>
 </html>

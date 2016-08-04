@@ -8,7 +8,6 @@ use App\Models\User;
 use App\Models\UsersBillingList;
 use libraries\CommonFunc;
 use libraries\GamesBaseInterface;
-use Sinergi\BrowserDetector\Browser;
 
 class LoapkInitController extends Controller implements GamesBaseInterface
 {
@@ -39,22 +38,10 @@ class LoapkInitController extends Controller implements GamesBaseInterface
         }
         else
         {
-            //detect user browser
-            $browser = new Browser();
-            if ($browser->getName() == 'Safari' && $browser->getVersion() == '9.1.1')
-            {
-                $isSafariBorwser = true;
-            }
-            else
-            {
-                $isSafariBorwser = false;
-            }
-
             return view('web.games.' . $this->game_code, [
-                'url_address'       => '',
-                'game_code'         => $this->game_code,
-                'server_id'         => $sid,
-                'is_safari_browser' => $isSafariBorwser
+                'url_address' => '',
+                'game_code'   => $this->game_code,
+                'server_id'   => $sid,
             ]);
         }
     }
