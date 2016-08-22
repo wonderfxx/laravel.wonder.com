@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string  $channel_email      支付邮箱
  * @property integer $channel_pay_time   支付时间
  * @property integer $channel_status     支付状态
- * @property integer $user_id            用户标示
+ * @property integer $user_id            GMT-ID
  * @property string  $user_grade         用户等级
  * @property string  $user_role          用户角色
  * @property string  $user_role_id       用户角色ID

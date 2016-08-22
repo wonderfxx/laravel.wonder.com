@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Input;
 
 class BillingUsersController extends Controller
 {
-    public $filter = ['password', 'remember','operation'];
+    public $filter = ['password', 'remember', 'operation'];
 
     /**
      * UserController constructor.
@@ -132,8 +132,10 @@ class BillingUsersController extends Controller
     {
 
         //search
-        $user_id = Input::get('user_id');
-        $email   = urldecode(Input::get('email'));
+        $user_id         = Input::get('user_id');
+        $kongregate_name = Input::get('kongregate_name');
+        $kongregate_id   = Input::get('kongregate_id');
+        $email           = urldecode(Input::get('email'));
 
         //get data
         $handler = new User();
@@ -155,6 +157,28 @@ class BillingUsersController extends Controller
                 if ($user_id)
                 {
                     return $query->whereUserid($user_id);
+                }
+                else
+                {
+                    return $query;
+                }
+            })
+            ->when($kongregate_name, function ($query) use ($kongregate_name)
+            {
+                if ($kongregate_name)
+                {
+                    return $query->whereUsername($kongregate_name);
+                }
+                else
+                {
+                    return $query;
+                }
+            })
+            ->when($kongregate_id, function ($query) use ($kongregate_id)
+            {
+                if ($kongregate_id)
+                {
+                    return $query->whereSnsId($kongregate_id);
                 }
                 else
                 {

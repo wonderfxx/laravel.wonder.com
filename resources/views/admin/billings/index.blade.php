@@ -14,7 +14,7 @@
                id="channel_order_id" name="channel_order_id">
     </div>
     <div class="form-group">
-        <input type="text" class="form-control" placeholder="请输入用户ID" value="" id="user_id"
+        <input type="text" class="form-control" placeholder="请输入GMT-ID" value="" id="user_id"
                name="user_id">
     </div>
     <div class="form-group">

@@ -7,7 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 /**
  * App\Models\User
  *
- * @property integer        $userid      用户ID
+ * @property integer        $userid      GMT-ID
  * @property string         $username    用户名
  * @property string         $password    用户密码
  * @property string         $email       用户邮箱
