@@ -28,8 +28,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereCreatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property string $sns_id 社交ID
- * @property string $ad_source 用户来源
+ * @property string         $sns_id      社交ID
+ * @property string         $ad_source   用户来源
  * @method static \Illuminate\Database\Query\Builder|\App\Models\User whereSnsId($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\User whereAdSource($value)
  */
@@ -45,9 +45,16 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'username', 'email', 'register_ip',
-        'created_at', 'login_ip', 'updated_at', 'ad_source', 'status',
-        'password', 'sns_id'
+        'username',
+        'email',
+        'register_ip',
+        'created_at',
+        'login_ip',
+        'updated_at',
+        'ad_source',
+        'status',
+        'password',
+        'sns_id',
     ];
 
     /**
@@ -68,12 +75,10 @@ class User extends Authenticatable
     {
         $data   = preg_split("/[\n]+/", (new \ReflectionClass(self::class))->getDocComment());
         $return = [];
-        foreach ($data as $k => $value)
-        {
-            if (strstr($value, '@property'))
-            {
-                $temp     = preg_split("/[\s]+/", trim(str_replace(' * @property ', '', $value)));
-                $index    = str_replace('$', '', $temp[1]);
+        foreach ($data as $k => $value) {
+            if (strstr($value, '@property')) {
+                $temp           = preg_split("/[\s]+/", trim(str_replace(' * @property ', '', $value)));
+                $index          = str_replace('$', '', $temp[1]);
                 $return[$index] = [
                     'field' => $index,
                     'title' => ($temp[2]),
@@ -85,4 +90,36 @@ class User extends Authenticatable
         return $return;
     }
 
+    public static function getRegUsers()
+    {
+
+        $data = self::select(\DB::raw("count(userid) as total,from_unixtime(`created_at`,'%Y-%m-%d') as ctime"))
+                    ->groupBy('ctime')
+                    ->get();
+
+        $result = [];
+        foreach ($data as $items) {
+            $result['date'][]  = $items->ctime;
+            $result['value'][] = $items->total ? (int)$items->total : 0;
+        }
+
+        return $result;
+    }
+
+    public static function getLoginUsers()
+    {
+
+        $data = self::select(\DB::raw("count(userid) as total,from_unixtime(`updated_at`,'%Y-%m-%d') as ctime"))
+                    ->where('updated_at', '!=', '0')
+                    ->groupBy('ctime')
+                    ->get();
+
+        $result = [];
+        foreach ($data as $items) {
+            $result['date'][]  = $items->ctime;
+            $result['value'][] = $items->total ? (int)$items->total : 0;
+        }
+
+        return $result;
+    }
 }

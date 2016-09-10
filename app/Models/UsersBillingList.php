@@ -83,10 +83,12 @@ class UsersBillingList extends Model
     public static function recordChange($fg_order_id, $status)
     {
         return self::whereFgOrderId($fg_order_id)
-                   ->update([
-                                'channel_status' => $status,
-                                'updated_time'   => time()
-                            ]);
+                   ->update(
+                       [
+                           'channel_status' => $status,
+                           'updated_time'   => time(),
+                       ]
+                   );
     }
 
     /**
@@ -101,11 +103,13 @@ class UsersBillingList extends Model
     public static function updateSendStatus($fg_order_id, $status)
     {
         return self::whereFgOrderId($fg_order_id)
-                   ->update([
+                   ->update(
+                       [
 
-                                'send_coins_status' => $status,
-                                'send_time'         => time(),
-                            ]);
+                           'send_coins_status' => $status,
+                           'send_time'         => time(),
+                       ]
+                   );
     }
 
     /**
@@ -117,10 +121,8 @@ class UsersBillingList extends Model
     {
         $data   = preg_split("/[\n]+/", (new \ReflectionClass(self::class))->getDocComment());
         $return = [];
-        foreach ($data as $k => $value)
-        {
-            if (strstr($value, '@property'))
-            {
+        foreach ($data as $k => $value) {
+            if (strstr($value, '@property')) {
                 $temp           = preg_split("/[\s]+/", trim(str_replace(' * @property ', '', $value)));
                 $index          = str_replace('$', '', $temp[1]);
                 $return[$index] = [
@@ -137,5 +139,55 @@ class UsersBillingList extends Model
         ];
 
         return $return;
+    }
+
+    /**
+     * 获取每日用户的转化率
+     *
+     * @return array
+     */
+    public static function getConversionRate()
+    {
+
+        $sql = "select a.created_times,a.placed_nums,b.pay_nums,concat ( left (b.pay_nums/a.placed_nums *100,5),'')";
+        $sql .= " as percent from  (SELECT from_unixtime(`created_time`,'%Y-%m-%d') as created_times,count(fg_order_id)";
+        $sql .= " as placed_nums FROM `users_billing_lists` WHERE 1 group by created_times) as a  left join ";
+        $sql .= " (SELECT from_unixtime(`created_time`,'%Y-%m-%d') as created_times2,count(fg_order_id) as pay_nums ";
+        $sql .= " FROM `users_billing_lists` WHERE send_coins_status in(2000,2004) group by created_times2) as b ";
+        $sql .= " on a.created_times=b.created_times2;";
+
+        $data   = \DB::select($sql);
+        $result = [];
+        foreach ($data as $items) {
+            $result['placed_nums'][] = $items->placed_nums;
+            $result['pay_nums'][]    = $items->pay_nums ? : 0;
+            $result['percent'][]     = (int)$items->percent ? : 0;
+            $result['date'][]        = $items->created_times;
+
+        }
+
+        return $result;
+    }
+
+    /**
+     * 获取每日营收
+     *
+     * @return array
+     */
+    public static function getRechargeList()
+    {
+
+        $data = self::select(\DB::raw("sum(amount) as total,from_unixtime(`created_time`,'%Y-%m-%d') as ctime"))
+                    ->whereIn('send_coins_status', [2000, 2004])
+                    ->groupBy('ctime')
+                    ->get();
+
+        $result = [];
+        foreach ($data as $items) {
+            $result['date'][]  = $items->ctime;
+            $result['value'][] = $items->total ? (int)$items->total / 10 : 0;
+        }
+
+        return $result;
     }
 }
