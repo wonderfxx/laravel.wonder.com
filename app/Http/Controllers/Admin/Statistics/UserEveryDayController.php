@@ -41,16 +41,22 @@ class UserEveryDayController extends Controller
             'admin.statistics.index',
             [
 
-                'placed_nums'  => json_encode($result['placed_nums']),
-                'pay_nums'     => json_encode($result['pay_nums']),
-                'date'         => json_encode($result['date']),
-                'percent'      => json_encode($result['percent']),
-                'amount_date'  => json_encode($data['date']),
-                'amount_total' => json_encode($data['value']),
-                'reg_date'     => json_encode($regUsers['date']),
-                'reg_total'    => json_encode($regUsers['value']),
-                'login_date'   => json_encode($loginUsers['date']),
-                'login_total'  => json_encode($loginUsers['value']),
+                'placed_nums'       => json_encode($result['placed_nums']),
+                'pay_nums'          => json_encode($result['pay_nums']),
+                'date'              => json_encode($result['date']),
+                'percent'           => json_encode($result['percent']),
+                'amount_date'       => json_encode($data['date']),
+                'amount_total'      => json_encode($data['value']),
+                'head_orders_total' => $data['total'],
+                'head_orders_nums'  => UsersBillingList::getOrderCount(),
+                'head_pay_nums'     => UsersBillingList::getUserCount(),
+                'head_reg_users'    => $regUsers['users'],
+
+                'reg_date'    => json_encode($regUsers['date']),
+                'reg_total'   => json_encode($regUsers['value']),
+                'login_date'  => json_encode($loginUsers['date']),
+                'login_total' => json_encode($loginUsers['value']),
+
             ]
 
         );

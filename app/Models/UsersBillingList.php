@@ -182,12 +182,34 @@ class UsersBillingList extends Model
                     ->groupBy('ctime')
                     ->get();
 
-        $result = [];
+        $result          = [];
+        $result['total'] = 0;
         foreach ($data as $items) {
             $result['date'][]  = $items->ctime;
             $result['value'][] = $items->total ? (int)$items->total / 10 : 0;
+            $result['total'] += $items->total ? (int)$items->total / 10 : 0;
         }
 
         return $result;
+    }
+
+    public static function getOrderCount()
+    {
+        $nums = self::select(\DB::raw("count(fg_order_id) as total"))
+                    ->whereIn('send_coins_status', [2000, 2004])
+                    ->first();
+
+        return $nums['total'];
+
+    }
+
+    public static function getUserCount()
+    {
+        $nums = self::select(\DB::raw("count(distinct user_id) as total"))
+                    ->whereIn('send_coins_status', [2000, 2004])
+                    ->first();
+
+        return $nums['total'];
+
     }
 }

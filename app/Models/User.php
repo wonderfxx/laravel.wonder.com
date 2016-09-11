@@ -97,10 +97,12 @@ class User extends Authenticatable
                     ->groupBy('ctime')
                     ->get();
 
-        $result = [];
+        $result          = [];
+        $result['users'] = 0;
         foreach ($data as $items) {
             $result['date'][]  = $items->ctime;
             $result['value'][] = $items->total ? (int)$items->total : 0;
+            $result['users'] += $items->total ? (int)$items->total : 0;
         }
 
         return $result;

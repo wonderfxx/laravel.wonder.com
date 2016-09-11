@@ -27,6 +27,58 @@
 @endsection
 @section('content')
     <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="col-sm-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <span class="label label-success pull-right">全年</span>
+                    <h5>总计营收</h5>
+                </div>
+                <div class="ibox-content">
+                    <h1 class="no-margins">$ {!! $head_orders_total !!}</h1>
+                    <div class="stat-percent font-bold text-danger">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <span class="label label-danger pull-right">全年</span>
+                    <h5>付费用户</h5>
+                </div>
+                <div class="ibox-content">
+                    <h1 class="no-margins">{!! $head_pay_nums !!}</h1>
+                    <div class="stat-percent font-bold text-danger">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <span class="label label-info pull-right">全年</span>
+                    <h5>成单总数</h5>
+                </div>
+                <div class="ibox-content">
+                    <h1 class="no-margins">{!! $head_orders_nums !!}</h1>
+                    <div class="stat-percent font-bold text-danger">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <span class="label label-primary pull-right">全年</span>
+                    <h5>注册用户</h5>
+                </div>
+                <div class="ibox-content">
+                    <h1 class="no-margins">{!! $head_reg_users !!}</h1>
+                    <div class="stat-percent font-bold text-danger">
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="col-sm-6">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
