@@ -209,7 +209,7 @@ class BillingsController extends Controller
                     return $query;
                 }
             })
-            ->orderBy('send_time', 'desc')
+            ->orderBy('created_time', 'desc')
             ->paginate(
                 Input::get('pageSize'),
                 $columns,

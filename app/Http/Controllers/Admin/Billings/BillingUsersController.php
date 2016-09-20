@@ -185,6 +185,7 @@ class BillingUsersController extends Controller
                     return $query;
                 }
             })
+            ->orderBy('created_at', 'desc')
             ->paginate(
                 Input::get('pageSize'),
                 $columns,

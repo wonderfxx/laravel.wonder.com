@@ -15,10 +15,12 @@ class KongregateController extends Controller
     public $paymentCore;
     public $requestHandler;
     public $channel = 'kongregate';
+    public $randomSerialNumber;
 
     public function __construct()
     {
         parent::setLogPath($this->channel);
+        $this->randomSerialNumber = time() . rand(100, 999);
     }
 
     /**
@@ -30,12 +32,13 @@ class KongregateController extends Controller
     {
 
         //纪录请求日志
-        \Log::info('request:', Request::all());
+        \Log::info($this->randomSerialNumber . '-request:', Request::all());
 
         //验证参数是否有效
         $gameInfo = GameServerList::whereGameCode(Request::get('gid'))->whereServerId(Request::get('sid'))->first();
-        if (!$gameInfo)
-        {
+        if (!$gameInfo) {
+            \Log::info($this->randomSerialNumber . '-request: validate game error.');
+
             return JsonResponse::create(['success' => 'false'], 422);
         }
 
@@ -43,10 +46,11 @@ class KongregateController extends Controller
         $requestData = $this->parse_signed_request($gameInfo->kongregate_api_key);
 
         //验证参数
-        \Log::info('sign:', $requestData);
+        \Log::info($this->randomSerialNumber . '-sign:', $requestData);
 
-        if (!$requestData)
-        {
+        if (!$requestData) {
+            \Log::info($this->randomSerialNumber . '-sign: validate sign error.');
+
             return JsonResponse::create(['success' => 'false'], 422);
         }
 
@@ -55,16 +59,17 @@ class KongregateController extends Controller
         $requestData['cb_fg_order_id'] = $extraParams[0];
         $requestData['cb_package_id']  = $extraParams[1];
         $this->requestHandler          = $requestData;
-        if ($this->requestHandler['event'] == 'item_order_request')
-        {
+        if ($this->requestHandler['event'] == 'item_order_request') {
             return $this->getPackageDetail();
         }
-        else if ($this->requestHandler['event'] == 'item_order_placed')
-        {
+        else if ($this->requestHandler['event'] == 'item_order_placed') {
+            \Log::info($this->randomSerialNumber . '-send: send data');
+
             return $this->sendCoins();
         }
-        else
-        {
+        else {
+            \Log::info($this->randomSerialNumber . '-cancel:', $this->requestHandler);
+
             return JsonResponse::create(["state" => "canceled"], 200);
         }
     }
@@ -78,16 +83,25 @@ class KongregateController extends Controller
     {
 
         $itemInfo = GamePackageList::whereId($this->requestHandler['cb_package_id'])->first();
-        $items    = [
-            [
-                "name"        => $itemInfo->product_name,
-                "description" => $itemInfo->product_description,
-                "price"       => (int)$itemInfo->amount,
-                "image_url"   => $itemInfo->product_logo,
-            ]
-        ];
+        if (empty($itemInfo)) {
+            \Log::info($this->randomSerialNumber . '-detail: empty package error.');
 
-        return JsonResponse::create(['items' => $items], 200);
+            return JsonResponse::create(['success' => 'false'], 422);
+        }
+        else {
+            $items = [
+                [
+                    "name"        => $itemInfo->product_name,
+                    "description" => $itemInfo->product_description,
+                    "price"       => (int)$itemInfo->amount,
+                    "image_url"   => $itemInfo->product_logo,
+                ],
+            ];
+            \Log::info($this->randomSerialNumber . '-detail: ', $items);
+
+            return JsonResponse::create(['items' => $items], 200);
+        }
+
     }
 
     /**
@@ -114,7 +128,7 @@ class KongregateController extends Controller
         //发钻
         $paymentCore->initRecharge();
 
-        \Log::info('charge status:' . $paymentCore->status);
+        \Log::info($this->randomSerialNumber . '-send:' . $paymentCore->status);
 
         return JsonResponse::create(["state" => "completed"], 200);
     }
@@ -129,8 +143,7 @@ class KongregateController extends Controller
 
         $sign = Request::get('signed_request');
         // Get the signed request from the request parameters
-        if (empty($sign))
-        {
+        if (empty($sign)) {
             return false;
         }
 
@@ -142,15 +155,13 @@ class KongregateController extends Controller
         $data = json_decode($this->base64_url_decode($payload), true);
 
         // Verify the signature algorithm
-        if (strtoupper($data['algorithm']) !== 'HMAC-SHA256')
-        {
+        if (strtoupper($data['algorithm']) !== 'HMAC-SHA256') {
             return false;
         }
 
         // Make sure that we calculate the same signature for the payload as was sent
         $expected_sig = hash_hmac('sha256', $payload, $game_api_key, $raw = true);
-        if ($sig !== $expected_sig)
-        {
+        if ($sig !== $expected_sig) {
             return false;
         }
 
