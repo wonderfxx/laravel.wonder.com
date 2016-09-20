@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web\Channels;
 
 use App\Http\Controllers\Controller;
+use libraries\CommonFunc;
 use Request;
 use App\Models\GamePackageList;
 use App\Models\GameServerList;
@@ -32,6 +33,7 @@ class KongregateController extends Controller
     {
 
         //纪录请求日志
+        \Log::info($this->randomSerialNumber . '-address:' . Request::getClientIp());
         \Log::info($this->randomSerialNumber . '-request:', Request::all());
 
         //验证参数是否有效
@@ -45,14 +47,13 @@ class KongregateController extends Controller
         //验证参数签名是否有效
         $requestData = $this->parse_signed_request($gameInfo->kongregate_api_key);
 
-        //验证参数
-        \Log::info($this->randomSerialNumber . '-sign:', $requestData);
-
         if (!$requestData) {
             \Log::info($this->randomSerialNumber . '-sign: validate sign error.');
 
             return JsonResponse::create(['success' => 'false'], 422);
         }
+        //验证参数
+        \Log::info($this->randomSerialNumber . '-sign:', $requestData);
 
         // order params: fg_order_id,package_id
         $extraParams                   = explode(',', $requestData['order_info']);
