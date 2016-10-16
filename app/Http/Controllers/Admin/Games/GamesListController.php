@@ -10,9 +10,20 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class GamesListController extends Controller
 {
-    public $filter = ['game_code', 'game_name', 'game_coins_name', 'game_type', 'proportion_usd',
-                      'proportion_local', 'proportion_local_currency', 'game_status', 'proportion_cp',
-                      'proportion_cp_currency', 'updated_at'];
+    public $filter = [
+        'game_code',
+        'game_name',
+        'game_coins_name',
+        'game_type',
+        'proportion_usd',
+        'proportion_local',
+        'proportion_local_currency',
+        'game_status',
+        'proportion_cp',
+        'proportion_cp_currency',
+        'kongregate_api_gid',
+        'updated_at',
+    ];
 
     /**
      * UserController constructor.
@@ -21,23 +32,25 @@ class GamesListController extends Controller
     {
         $this->middleware('admin');
         //共享数据
-        view()->share([
-                          'headers'     => GameList::getColumns(),
-                          'games'       => GameList::getGameNames(),
-                          'game_types'  => [
-                              '0'      => '请选择游戏类型',
-                              'mobile' => '手游',
-                              'web'    => '页游',
-                              'client' => '端游',
-                              'other'  => '其它',
-                          ],
-                          'game_status' => [
-                              '0' => '请选择游戏状态',
-                              'Y' => '已上线',
-                              'N' => '已下线',
-                              'T' => '测试中',
-                          ]
-                      ]);
+        view()->share(
+            [
+                'headers'     => GameList::getColumns(),
+                'games'       => GameList::getGameNames(),
+                'game_types'  => [
+                    '0'      => '请选择游戏类型',
+                    'mobile' => '手游',
+                    'web'    => '页游',
+                    'client' => '端游',
+                    'other'  => '其它',
+                ],
+                'game_status' => [
+                    '0' => '请选择游戏状态',
+                    'Y' => '已上线',
+                    'N' => '已下线',
+                    'T' => '测试中',
+                ],
+            ]
+        );
     }
 
     /**
@@ -51,10 +64,8 @@ class GamesListController extends Controller
         $columns = GameList::getColumns();
         $return  = [];
 
-        foreach ($columns as $val)
-        {
-            if (in_array($val['field'], $this->filter))
-            {
+        foreach ($columns as $val) {
+            if (in_array($val['field'], $this->filter)) {
                 $return[] = $val;
             }
         }
@@ -64,9 +75,12 @@ class GamesListController extends Controller
             'align' => 'center',
         ];
 
-        return view('admin.games.index', [
-            'headers' => json_encode($return),
-        ]);
+        return view(
+            'admin.games.index',
+            [
+                'headers' => json_encode($return),
+            ]
+        );
     }
 
     /**
@@ -88,13 +102,12 @@ class GamesListController extends Controller
      */
     public function store(Request $request)
     {
-        $rules     = array(
+        $rules     = [
             'game_code' => 'required',
             'game_name' => 'required',
-        );
+        ];
         $validator = \Validator::make($request->all(), $rules);
-        if (!$validator->fails())
-        {
+        if (!$validator->fails()) {
             $handler                            = new GameList();
             $handler->game_code                 = $request->get('game_code');
             $handler->game_name                 = $request->get('game_name');
@@ -110,24 +123,25 @@ class GamesListController extends Controller
             $handler->recharge_api              = $request->get('recharge_api');
             $handler->charge_back_api           = $request->get('charge_back_api');
             $handler->server_list_api           = $request->get('server_list_api');
+            $handler->kongregate_api_gid        = $request->get('kongregate_api_gid');
+            $handler->kongregate_api_key        = $request->get('kongregate_api_key');
+            $handler->kongregate_guest_key      = $request->get('kongregate_guest_key');
+
 //            $handler->user_role_api             = $request->get('user_role_api');
 
             $handler->created_at = time();
             if (!$handler->whereGameCode($request->get('game_code'))
                          ->first()
-            )
-            {
+            ) {
                 $handler->save();
 
                 return JsonResponse::create(['msg' => 'success'], 200);
             }
-            else
-            {
+            else {
                 return JsonResponse::create(['msg' => '游戏已经存在'], 422);
             }
         }
-        else
-        {
+        else {
             return JsonResponse::create(['msg' => '缺少必填参数'], 422);
         }
     }
@@ -141,9 +155,12 @@ class GamesListController extends Controller
      */
     public function show($id)
     {
-        return view('admin.games.index_info', [
-            'data' => GameList::whereId((int)$id)->first()->toArray(),
-        ]);
+        return view(
+            'admin.games.index_info',
+            [
+                'data' => GameList::whereId((int)$id)->first()->toArray(),
+            ]
+        );
     }
 
     /**
@@ -155,9 +172,12 @@ class GamesListController extends Controller
      */
     public function edit($id)
     {
-        return view('admin.games.index_edit', [
-            'data' => GameList::whereId((int)$id)->first(),
-        ]);
+        return view(
+            'admin.games.index_edit',
+            [
+                'data' => GameList::whereId((int)$id)->first(),
+            ]
+        );
     }
 
     /**
@@ -170,19 +190,17 @@ class GamesListController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $rules     = array(
+        $rules     = [
             'game_code' => 'required',
             'game_name' => 'required',
-        );
+        ];
         $validator = \Validator::make($request->all(), $rules);
-        if (!$validator->fails())
-        {
+        if (!$validator->fails()) {
 
             $handler     = GameList::whereId($id)->first();
             $currentData = GameList::whereGameCode($request->get('game_code'))
                                    ->first();
-            if (!$currentData || $currentData->id == $id)
-            {
+            if (!$currentData || $currentData->id == $id) {
                 $handler->game_code                 = $request->get('game_code');
                 $handler->game_name                 = $request->get('game_name');
                 $handler->game_status               = $request->get('game_status');
@@ -198,18 +216,19 @@ class GamesListController extends Controller
                 $handler->charge_back_api           = $request->get('charge_back_api');
                 $handler->server_list_api           = $request->get('server_list_api');
                 $handler->user_role_api             = $request->get('user_role_api');
+                $handler->kongregate_api_gid        = $request->get('kongregate_api_gid');
+                $handler->kongregate_api_key        = $request->get('kongregate_api_key');
+                $handler->kongregate_guest_key      = $request->get('kongregate_guest_key');
                 $handler->updated_at                = time();
                 $handler->save();
 
                 return JsonResponse::create(['msg' => 'success'], 200);
             }
-            else
-            {
+            else {
                 return JsonResponse::create(['msg' => '游戏已经存在'], 422);
             }
         }
-        else
-        {
+        else {
             return JsonResponse::create(['msg' => '缺少必填参数'], 422);
         }
     }
@@ -223,21 +242,17 @@ class GamesListController extends Controller
      */
     public function destroy($id)
     {
-        if (empty($id))
-        {
+        if (empty($id)) {
             return JsonResponse::create(['error' => '无效参数'], 422);
         }
         $result = GameList::whereId((int)$id)->first();
-        if (empty($result))
-        {
+        if (empty($result)) {
             return JsonResponse::create(['error' => '无效ID标识'], 422);
         }
-        if ($result->delete())
-        {
+        if ($result->delete()) {
             return JsonResponse::create(['success' => '删除成功']);
         }
-        else
-        {
+        else {
             return JsonResponse::create(['error' => '删除失败'], 422);
         }
     }
@@ -259,39 +274,39 @@ class GamesListController extends Controller
         $handler = new GameList();
         $columns = \Schema::getColumnListing($handler->getTable());
         $result  = $handler
-            ->when($game_code, function ($query) use ($game_code)
-            {
-                if ($game_code)
-                {
-                    return $query->whereGameCode($game_code);
+            ->when(
+                $game_code,
+                function ($query) use ($game_code) {
+                    if ($game_code) {
+                        return $query->whereGameCode($game_code);
+                    }
+                    else {
+                        return $query;
+                    }
                 }
-                else
-                {
-                    return $query;
+            )
+            ->when(
+                $game_status,
+                function ($query) use ($game_status) {
+                    if ($game_status) {
+                        return $query->whereGameStatus($game_status);
+                    }
+                    else {
+                        return $query;
+                    }
                 }
-            })
-            ->when($game_status, function ($query) use ($game_status)
-            {
-                if ($game_status)
-                {
-                    return $query->whereGameStatus($game_status);
+            )
+            ->when(
+                $game_type,
+                function ($query) use ($game_type) {
+                    if ($game_type) {
+                        return $query->whereGameType($game_type);
+                    }
+                    else {
+                        return $query;
+                    }
                 }
-                else
-                {
-                    return $query;
-                }
-            })
-            ->when($game_type, function ($query) use ($game_type)
-            {
-                if ($game_type)
-                {
-                    return $query->whereGameType($game_type);
-                }
-                else
-                {
-                    return $query;
-                }
-            })
+            )
             ->orderBy('created_at', 'desc')
             ->paginate(
                 Input::get('pageSize'),
@@ -299,10 +314,8 @@ class GamesListController extends Controller
                 'page',
                 Input::get('pageNumber')
             );
-        foreach ($result->items() as $items)
-        {
-            switch ($items->game_status)
-            {
+        foreach ($result->items() as $items) {
+            switch ($items->game_status) {
                 case 'Y':
                     $items->game_status = '<span class="label label-primary">已上线</span>';
                     break;
@@ -313,8 +326,7 @@ class GamesListController extends Controller
                     $items->game_status = '<span class="label label-warning">测试中</span>';
                     break;
             }
-            switch ($items->game_type)
-            {
+            switch ($items->game_type) {
                 case 'web':
                     $items->game_type = '<span class="label label-primary">页游</span>';
                     break;

@@ -104,55 +104,48 @@
                        'class' => 'form-control'
                     ]) !!}
                 </div>
-                <div class="col-xs-6">
-                    {!! Form::input('text','kongregate_api_gid',$data->kongregate_api_gid,[
-                       'placeholder' =>  "请输入".$headers['kongregate_api_gid']['title'],
-                       "data-placement"    =>"top",
-                        "data-toggle"       =>"tooltip" ,
-                        "data-original-title"=>"请输入".$headers['kongregate_api_gid']['title'],
-                        'required'      => '',
-                       'class' => 'form-control'
-                    ]) !!}
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="col-xs-6">
-                    {!! Form::textarea('kongregate_api_key',$data->kongregate_api_key,[
-                       'placeholder' =>  "请输入".$headers['kongregate_api_key']['title'],
-                       "data-placement"    =>"top",
-                        "data-toggle"       =>"tooltip" ,
-                        "data-original-title"=>"请输入".$headers['kongregate_api_key']['title'],
-                       'rows' =>'2',
-                       'required'      => '',
-                       'class' => 'form-control',
-                    ]) !!}
-                </div>
-                <div class="col-xs-6">
-                    {!! Form::textarea('kongregate_guest_key',$data->kongregate_guest_key,[
-                       'placeholder' =>  "请输入".$headers['kongregate_guest_key']['title'],
-                       "data-placement"    =>"top",
-                        "data-toggle"       =>"tooltip" ,
-                        "data-original-title"=>"请输入".$headers['kongregate_guest_key']['title'],
-                       'rows' =>'2',
-                       'required'      => '',
-                       'class' => 'form-control'
-                    ]) !!}
-                </div>
             </div>
             <div class="form-group">
                 <div class="col-xs-12">
 
                     @if($data->status =='Y')
                         <label> {!! Form::radio('status','Y','checked',[]) !!}
-                            <span class="label label-primary">已启用</span> </label> <label>
+                            <span class="label label-primary">已启用</span>
+                        </label>
+                        <label>
+                            {!! Form::radio('status','T','',['style'=>'margin-left:10px']) !!}
+                            <span class="label label-info">测试中</span>
+                        </label>
+                        <label>
                             {!! Form::radio('status','N','',['style'=>'margin-left:10px']) !!}
-                            <span class="label label-danger">未启用</span> </label>
+                            <span class="label label-danger">未启用</span>
+                        </label>
+                    @elseif($data->status =='T')
+                        <label>
+                            {!! Form::radio('status','Y','',[]) !!}
+                            <span class="label label-primary">已启用</span>
+                        </label>
+                        <label>
+                            {!! Form::radio('status','T','checked',['style'=>'margin-left:10px']) !!}
+                            <span class="label label-info">测试中</span>
+                        </label>
+                        <label>
+                            {!! Form::radio('status','N','',['style'=>'margin-left:10px']) !!}
+                            <span class="label label-danger">未启用</span>
+                        </label>
                     @else
                         <label>
                             {!! Form::radio('status','Y','',[]) !!}
-                            <span class="label label-primary">已启用</span> </label> <label>
+                            <span class="label label-primary">已启用</span>
+                        </label>
+                        <label>
+                            {!! Form::radio('status','T','',['style'=>'margin-left:10px']) !!}
+                            <span class="label label-info">测试中</span>
+                        </label>
+                        <label>
                             {!! Form::radio('status','N','checked',['style'=>'margin-left:10px']) !!}
-                            <span class="label label-danger">未启用</span> </label>
+                            <span class="label label-danger">未启用</span>
+                        </label>
                     @endif
 
                 </div>

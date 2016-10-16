@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\Web\Channels;
 
 use App\Http\Controllers\Controller;
-use libraries\CommonFunc;
+use App\Models\GameList;
 use Request;
 use App\Models\GamePackageList;
-use App\Models\GameServerList;
 use libraries\PaymentCore;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -37,7 +36,7 @@ class KongregateController extends Controller
         \Log::info($this->randomSerialNumber . '-request:', Request::all());
 
         //验证参数是否有效
-        $gameInfo = GameServerList::whereGameCode(Request::get('gid'))->whereServerId(Request::get('sid'))->first();
+        $gameInfo = GameList::whereGameCode(Request::get('gid'))->first();
         if (!$gameInfo) {
             \Log::info($this->randomSerialNumber . '-request: validate game error.');
 

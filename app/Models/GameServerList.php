@@ -19,9 +19,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property string         $server_address         服务器地址
  * @property \Carbon\Carbon $created_at             创建时间
  * @property \Carbon\Carbon $updated_at             更新时间
- * @property string         $kongregate_api_key     KongregateKey
- * @property string         $kongregate_api_gid     KongregateGid
- * @property string         $kongregate_guest_key   KongregateGuestKey
  * @property string         $status                 启用状态
  * @method static \Illuminate\Database\Query\Builder|\App\Models\GameServerList whereId($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\GameServerList whereGameCode($value)
@@ -35,9 +32,6 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\GameServerList whereServerAddress($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\GameServerList whereCreatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\GameServerList whereUpdatedAt($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\GameServerList whereKongregateApiKey($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\GameServerList whereKongregateApiGid($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\GameServerList whereKongregateGuestKey($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\GameServerList whereStatus($value)
  * @mixin \Eloquent
  */

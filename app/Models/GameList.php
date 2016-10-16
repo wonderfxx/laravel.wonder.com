@@ -25,6 +25,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Carbon\Carbon $created_at                  创建时间
  * @property \Carbon\Carbon $updated_at                  更新时间
  * @property string         $game_status                 游戏状态
+ * @property string         $kongregate_api_key          KongregateKey
+ * @property string         $kongregate_api_gid          KongregateGid
+ * @property string         $kongregate_guest_key        KongregateGuestKey
  * @method static \Illuminate\Database\Query\Builder|\App\Models\GameList whereId($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\GameList whereGameCode($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\GameList whereGameName($value)
@@ -43,6 +46,9 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\GameList whereUserRoleApi($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\GameList whereCreatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\GameList whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\GameList whereKongregateApiKey($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\GameList whereKongregateApiGid($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\GameList whereKongregateGuestKey($value)
  * @mixin \Eloquent
  */
 class GameList extends Model
@@ -75,7 +81,7 @@ class GameList extends Model
 
         return [
             'amount'   => number_format($game_coins / $gameInfo->proportion_cp, 2, '.', ''),
-            'currency' => $gameInfo->proportion_cp_currency
+            'currency' => $gameInfo->proportion_cp_currency,
         ];
     }
 
@@ -89,10 +95,8 @@ class GameList extends Model
         $data   = preg_split("/[\n]+/", (new \ReflectionClass(self::class))->getDocComment());
         $return = [];
 
-        foreach ($data as $k => $value)
-        {
-            if (strstr($value, '@property'))
-            {
+        foreach ($data as $k => $value) {
+            if (strstr($value, '@property')) {
                 $temp           = preg_split("/[\s]+/", trim(str_replace(' * @property ', '', $value)));
                 $index          = str_replace('$', '', $temp[1]);
                 $return[$index] = [
@@ -113,7 +117,7 @@ class GameList extends Model
 
     /**
      *  游戏列表
-     * 
+     *
      * @return array
      */
     public static function getGameNames()
@@ -121,8 +125,7 @@ class GameList extends Model
 
         $return = [];
         $data   = self::whereGameStatus('Y')->get(['game_name', 'game_code']);
-        foreach ($data as $item)
-        {
+        foreach ($data as $item) {
             $return[$item->game_code] = $item->game_name;
         }
 

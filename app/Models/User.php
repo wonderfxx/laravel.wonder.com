@@ -7,16 +7,18 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 /**
  * App\Models\User
  *
- * @property integer        $userid      GMT-ID
- * @property string         $username    用户名
- * @property string         $password    用户密码
- * @property string         $email       用户邮箱
- * @property string         $remember    记住密码
- * @property string         $register_ip 注册IP
- * @property string         $login_ip    登陆IP
- * @property string         $status      用户状态
- * @property \Carbon\Carbon $created_at  创建时间
- * @property \Carbon\Carbon $updated_at  更新时间
+ * @property integer        $userid                 GMT-ID
+ * @property string         $username               用户名
+ * @property string         $password               用户密码
+ * @property string         $email                  用户邮箱
+ * @property string         $remember               记住密码
+ * @property string         $register_ip            注册IP
+ * @property string         $login_ip               登陆IP
+ * @property string         $status                 用户状态
+ * @property string         $last_login_game        用户最近登录游戏
+ * @property integer        $last_login_server      用户最近登录服务器
+ * @property \Carbon\Carbon $created_at             创建时间
+ * @property \Carbon\Carbon $updated_at             更新时间
  * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereUserid($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereUsername($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser wherePassword($value)
@@ -27,9 +29,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereStatus($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereCreatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereLastLoginGame($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereLastLoginServer($value)
  * @mixin \Eloquent
- * @property string         $sns_id      社交ID
- * @property string         $ad_source   用户来源
+ * @property string         $sns_id                 社交ID
+ * @property string         $ad_source              用户来源
  * @method static \Illuminate\Database\Query\Builder|\App\Models\User whereSnsId($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\User whereAdSource($value)
  */
@@ -55,6 +59,8 @@ class User extends Authenticatable
         'status',
         'password',
         'sns_id',
+        'last_login_game',
+        'last_login_server',
     ];
 
     /**

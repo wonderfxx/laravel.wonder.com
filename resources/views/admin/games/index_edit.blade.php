@@ -160,6 +160,40 @@
             </div>
             <div class="form-group">
                 <div class="col-xs-6">
+                    {!! Form::textarea('kongregate_api_key',$data->kongregate_api_key,[
+                       'placeholder' =>  "请输入".$headers['kongregate_api_key']['title'],
+                       "data-placement"    =>"top",
+                        "data-toggle"       =>"tooltip" ,
+                        "data-original-title"=>"请输入".$headers['kongregate_api_key']['title'],
+                       'rows' =>'2',
+                       'class' => 'form-control'
+                    ]) !!}
+                </div>
+                <div class="col-xs-6">
+                    {!! Form::textarea('kongregate_api_gid',$data->kongregate_api_gid,[
+                       'placeholder' =>  "请输入".$headers['kongregate_api_gid']['title'],
+                       "data-placement"    =>"top",
+                        "data-toggle"       =>"tooltip" ,
+                        "data-original-title"=>"请输入".$headers['kongregate_api_gid']['title'],
+                       'rows' =>'2',
+                       'class' => 'form-control'
+                    ]) !!}
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-xs-6">
+                    {!! Form::textarea('kongregate_guest_key',$data->kongregate_guest_key,[
+                       'placeholder' =>  "请输入".$headers['kongregate_guest_key']['title'],
+                       "data-placement"    =>"top",
+                        "data-toggle"       =>"tooltip" ,
+                        "data-original-title"=>"请输入".$headers['kongregate_guest_key']['title'],
+                       'rows' =>'2',
+                       'class' => 'form-control'
+                    ]) !!}
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-xs-6">
                     {!! Form::select('game_status',$game_status,$data->game_status,[
                         'class' => 'form-control chosen-select'
                     ]) !!}

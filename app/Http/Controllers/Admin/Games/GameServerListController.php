@@ -11,9 +11,16 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class GameServerListController extends Controller
 {
-    public $filter = ['game_code', 'server_id', 'server_open_at', 'server_close_at', 'kongregate_api_key',
-                      'kongregate_api_gid', 'game_coins_rewards', 'status',
-                      'updated_at', 'id'];
+    public $filter = [
+        'game_code',
+        'server_id',
+        'server_open_at',
+        'server_close_at',
+        'game_coins_rewards',
+        'status',
+        'updated_at',
+        'id',
+    ];
 
     /**
      * UserController constructor.
@@ -22,10 +29,12 @@ class GameServerListController extends Controller
     {
         $this->middleware('admin');
         //共享数据
-        view()->share([
-                          'headers' => GameServerList::getColumns(),
-                          'games'   => GameList::getGameNames(),
-                      ]);
+        view()->share(
+            [
+                'headers' => GameServerList::getColumns(),
+                'games'   => GameList::getGameNames(),
+            ]
+        );
     }
 
     /**
@@ -38,10 +47,8 @@ class GameServerListController extends Controller
         $columns = GameServerList::getColumns();
         $return  = [];
 
-        foreach ($columns as $val)
-        {
-            if (in_array($val['field'], $this->filter))
-            {
+        foreach ($columns as $val) {
+            if (in_array($val['field'], $this->filter)) {
                 $return[] = $val;
             }
         }
@@ -51,9 +58,12 @@ class GameServerListController extends Controller
             'align' => 'center',
         ];
 
-        return view('admin.games.server', [
-            'headers' => json_encode($return),
-        ]);
+        return view(
+            'admin.games.server',
+            [
+                'headers' => json_encode($return),
+            ]
+        );
     }
 
     /**
@@ -75,53 +85,50 @@ class GameServerListController extends Controller
      */
     public function store(Request $request)
     {
-        $rules     = array(
-            'game_code'            => 'required',
-            'server_id'            => 'required',
-            'server_name'          => 'required',
-            'kongregate_api_key'   => 'required',
-            'kongregate_api_gid'   => 'required',
-            'kongregate_guest_key' => 'required',
-
-        );
+        $rules     = [
+            'game_code'   => 'required',
+            'server_id'   => 'required',
+            'server_name' => 'required',
+        ];
         $validator = \Validator::make($request->all(), $rules);
-        if (!$validator->fails())
-        {
-            $handler                       = new GameServerList();
-            $handler->game_code            = $request->get('game_code');
-            $handler->server_id            = $request->get('server_id');
-            $handler->server_name          = $request->get('server_name');
-            $handler->server_type          = $request->get('server_type');
-            $handler->kongregate_api_key   = $request->get('kongregate_api_key');
-            $handler->kongregate_api_gid   = $request->get('kongregate_api_gid');
-            $handler->kongregate_guest_key = $request->get('kongregate_guest_key');
-            $handler->server_open_at       = $request->get('server_open_at') ? strtotime($request->get
-            ('server_open_at')) : 0;
-            $handler->server_close_at      = $request->get('server_close_at') ? strtotime($request->get
-            ('server_close_at')) : 0;
-            $handler->server_lang          = $request->get('server_lang');
-            $handler->server_region        = $request->get('server_region');
-            $handler->server_address       = $request->get('server_address');
-            $handler->status               = $request->get('status');
+        if (!$validator->fails()) {
+            $handler                  = new GameServerList();
+            $handler->game_code       = $request->get('game_code');
+            $handler->server_id       = $request->get('server_id');
+            $handler->server_name     = $request->get('server_name');
+            $handler->server_type     = $request->get('server_type');
+            $handler->server_open_at  = $request->get('server_open_at') ? strtotime(
+                $request->get
+                (
+                    'server_open_at'
+                )
+            ) : 0;
+            $handler->server_close_at = $request->get('server_close_at') ? strtotime(
+                $request->get
+                (
+                    'server_close_at'
+                )
+            ) : 0;
+            $handler->server_lang     = $request->get('server_lang');
+            $handler->server_region   = $request->get('server_region');
+            $handler->server_address  = $request->get('server_address');
+            $handler->status          = $request->get('status');
 
             $handler->created_at = time();
             if (!$handler->whereGameCode($request->get('game_code'))
                          ->whereServerId($request->get('server_id'))
                          ->whereServerType($request->get('server_type'))
                          ->first()
-            )
-            {
+            ) {
                 $handler->save();
 
                 return JsonResponse::create(['msg' => 'success'], 200);
             }
-            else
-            {
+            else {
                 return JsonResponse::create(['msg' => '服务器ID已经存在'], 422);
             }
         }
-        else
-        {
+        else {
             return JsonResponse::create(['msg' => '缺少必填参数'], 422);
         }
     }
@@ -135,9 +142,12 @@ class GameServerListController extends Controller
      */
     public function show($id)
     {
-        return view('admin.games.server_info', [
-            'data' => GameServerList::whereId((int)$id)->first()->toArray(),
-        ]);
+        return view(
+            'admin.games.server_info',
+            [
+                'data' => GameServerList::whereId((int)$id)->first()->toArray(),
+            ]
+        );
     }
 
     /**
@@ -149,9 +159,12 @@ class GameServerListController extends Controller
      */
     public function edit($id)
     {
-        return view('admin.games.server_edit', [
-            'data' => GameServerList::whereId((int)$id)->first(),
-        ]);
+        return view(
+            'admin.games.server_edit',
+            [
+                'data' => GameServerList::whereId((int)$id)->first(),
+            ]
+        );
     }
 
     /**
@@ -164,53 +177,50 @@ class GameServerListController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $rules     = array(
-            'game_code'            => 'required',
-            'server_id'            => 'required',
-            'server_name'          => 'required',
-            'kongregate_api_key'   => 'required',
-            'kongregate_api_gid'   => 'required',
-            'kongregate_guest_key' => 'required',
-
-        );
+        $rules     = [
+            'game_code'   => 'required',
+            'server_id'   => 'required',
+            'server_name' => 'required',
+        ];
         $validator = \Validator::make($request->all(), $rules);
-        if (!$validator->fails())
-        {
+        if (!$validator->fails()) {
             $handler     = GameServerList::whereId($id)->first();
             $currentData = GameServerList::whereGameCode($request->get('game_code'))
                                          ->whereServerId($request->get('server_id'))
                                          ->whereServerType($request->get('server_type'))
                                          ->first();
-            if (!$currentData || $currentData->id == $id)
-            {
-                $handler->game_code            = $request->get('game_code');
-                $handler->server_id            = $request->get('server_id');
-                $handler->server_name          = $request->get('server_name');
-                $handler->server_type          = $request->get('server_type');
-                $handler->kongregate_api_key   = $request->get('kongregate_api_key');
-                $handler->kongregate_api_gid   = $request->get('kongregate_api_gid');
-                $handler->kongregate_guest_key = $request->get('kongregate_guest_key');
-                $handler->server_open_at       = $request->get('server_open_at') ? strtotime($request->get
-                ('server_open_at')) : 0;
-                $handler->server_close_at      = $request->get('server_close_at') ? strtotime($request->get
-                ('server_close_at')) : 0;
-                $handler->server_lang          = $request->get('server_lang');
-                $handler->server_region        = $request->get('server_region');
-                $handler->server_address       = $request->get('server_address');
-                $handler->status               = $request->get('status');
+            if (!$currentData || $currentData->id == $id) {
+                $handler->game_code       = $request->get('game_code');
+                $handler->server_id       = $request->get('server_id');
+                $handler->server_name     = $request->get('server_name');
+                $handler->server_type     = $request->get('server_type');
+                $handler->server_open_at  = $request->get('server_open_at') ? strtotime(
+                    $request->get
+                    (
+                        'server_open_at'
+                    )
+                ) : 0;
+                $handler->server_close_at = $request->get('server_close_at') ? strtotime(
+                    $request->get
+                    (
+                        'server_close_at'
+                    )
+                ) : 0;
+                $handler->server_lang     = $request->get('server_lang');
+                $handler->server_region   = $request->get('server_region');
+                $handler->server_address  = $request->get('server_address');
+                $handler->status          = $request->get('status');
 
                 $handler->updated_at = time();
                 $handler->save();
 
                 return JsonResponse::create(['msg' => 'success'], 200);
             }
-            else
-            {
+            else {
                 return JsonResponse::create(['msg' => '服务器ID已经存在'], 422);
             }
         }
-        else
-        {
+        else {
             return JsonResponse::create(['msg' => '缺少必填参数'], 422);
         }
     }
@@ -225,21 +235,17 @@ class GameServerListController extends Controller
     public
     function destroy($id)
     {
-        if (empty($id))
-        {
+        if (empty($id)) {
             return JsonResponse::create(['error' => '无效参数'], 422);
         }
         $result = GameServerList::whereId((int)$id)->first();
-        if (empty($result))
-        {
+        if (empty($result)) {
             return JsonResponse::create(['error' => '无效ID标识'], 422);
         }
-        if ($result->delete())
-        {
+        if ($result->delete()) {
             return JsonResponse::create(['success' => '删除成功']);
         }
-        else
-        {
+        else {
             return JsonResponse::create(['error' => '删除失败'], 422);
         }
     }
@@ -262,39 +268,39 @@ class GameServerListController extends Controller
         $handler = new GameServerList();
         $columns = \Schema::getColumnListing($handler->getTable());
         $result  = $handler
-            ->when($status, function ($query) use ($status)
-            {
-                if ($status)
-                {
-                    return $query->whereStatus($status);
+            ->when(
+                $status,
+                function ($query) use ($status) {
+                    if ($status) {
+                        return $query->whereStatus($status);
+                    }
+                    else {
+                        return $query;
+                    }
                 }
-                else
-                {
-                    return $query;
+            )
+            ->when(
+                $game_code,
+                function ($query) use ($game_code) {
+                    if ($game_code) {
+                        return $query->whereGameCode($game_code);
+                    }
+                    else {
+                        return $query;
+                    }
                 }
-            })
-            ->when($game_code, function ($query) use ($game_code)
-            {
-                if ($game_code)
-                {
-                    return $query->whereGameCode($game_code);
+            )
+            ->when(
+                $server_id,
+                function ($query) use ($server_id) {
+                    if ($server_id) {
+                        return $query->whereServerId($server_id);
+                    }
+                    else {
+                        return $query;
+                    }
                 }
-                else
-                {
-                    return $query;
-                }
-            })
-            ->when($server_id, function ($query) use ($server_id)
-            {
-                if ($server_id)
-                {
-                    return $query->whereServerId($server_id);
-                }
-                else
-                {
-                    return $query;
-                }
-            })
+            )
             ->orderBy('created_at', 'desc')
             ->paginate(
                 Input::get('pageSize'),
@@ -302,13 +308,14 @@ class GameServerListController extends Controller
                 'page',
                 Input::get('pageNumber')
             );
-        foreach ($result->items() as $items)
-        {
+        foreach ($result->items() as $items) {
 
-            switch ($items->status)
-            {
+            switch ($items->status) {
                 case 'Y':
                     $items->status = '<span class="label label-primary">已启用</span>';
+                    break;
+                case 'T':
+                    $items->status = '<span class="label label-info">测试中</span>';
                     break;
                 case 'N':
                     $items->status = '<span class="label label-danger">未启用</span>';

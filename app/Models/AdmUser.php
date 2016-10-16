@@ -32,6 +32,10 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * @property string         $api_token
  * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereRememberToken($value)
  * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereApiToken($value)
+ * @property string $last_login_game
+ * @property integer $last_login_server
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereLastLoginGame($value)
+ * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereLastLoginServer($value)
  */
 class AdmUser extends Authenticatable
 {
