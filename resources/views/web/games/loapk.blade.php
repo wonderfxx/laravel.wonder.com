@@ -4,7 +4,7 @@
     <link href="/assets/img/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
     <script type="text/javascript" src='//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js'></script>
     <script type="text/javascript" src='//cdn1.kongregate.com/javascripts/kongregate_api.js'></script>
-    <link href="/assets/css/game/kg.min.css" rel="stylesheet">
+    <link href="/assets/css/game/kg.min.css?v=1.2.0" rel="stylesheet">
     <script type="text/javascript">
         document.domain = "fingertactic.com";
     </script>

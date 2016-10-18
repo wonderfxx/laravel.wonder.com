@@ -19,7 +19,7 @@ body {
 }
 
 .game_content {
-    top: 30px;
+    top: 0px;
     left: 0;
     width: 100%;
     height: 600px;
@@ -76,7 +76,7 @@ body {
 /* header */
 .header {
     height: 30px;
-    display: block;
+    display: none;
     min-width: 600px;
     width: 100%;
 }
@@ -108,7 +108,7 @@ body {
 }
 
 .server_content {
-    top: 30px;
+    top: 0px;
     left: 0;
     width: 100%;
     height: 600px;
