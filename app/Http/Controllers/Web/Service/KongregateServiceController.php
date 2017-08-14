@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Web\Service;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Web\Games\PlayController;
 use App\Models\GameList;
-use App\Models\GameServerList;
 use App\Models\User;
 use Illuminate\Support\Facades\Input;
 use libraries\CommonFunc;
@@ -136,9 +135,7 @@ class KongregateServiceController extends Controller
         $data[$credentials['gid'] . '-s' . $credentials['sid'] . '-user-loaded'] = $credentials['loaded'];
         $data[$credentials['gid'] . '-s' . $credentials['sid'] . '-user-coins']  = $credentials['coins'];
 
-        $gameServerInfo = GameServerList::whereGameCode($credentials['gid'])
-                                        ->whereServerId($credentials['sid'])
-                                        ->first();
+        $gameServerInfo = GameList::whereGameCode($credentials['gid'])->first();
         $isReported     = $this->submitGameData($credentials['uid'], $gameServerInfo->kongregate_api_key, $data);
         if ($isReported) {
 
