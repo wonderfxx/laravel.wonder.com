@@ -131,9 +131,9 @@ class KongregateServiceController extends Controller
         $credentials['uid'] = $userInfo->sns_id;
 
         //获取数据
-        $data[$credentials['gid'] . '-s' . $credentials['sid'] . '-user-grade']  = $credentials['grade'];
-        $data[$credentials['gid'] . '-s' . $credentials['sid'] . '-user-loaded'] = $credentials['loaded'];
-        $data[$credentials['gid'] . '-s' . $credentials['sid'] . '-user-coins']  = $credentials['coins'];
+        $data[$credentials['gid'] .'-user-grade']  = $credentials['grade'];
+        $data[$credentials['gid'] .'-user-loaded'] = $credentials['loaded'];
+        $data[$credentials['gid'] .'-user-coins']  = $credentials['coins'];
 
         $gameServerInfo = GameList::whereGameCode($credentials['gid'])->first();
         $isReported     = $this->submitGameData($credentials['uid'], $gameServerInfo->kongregate_api_key, $data);
