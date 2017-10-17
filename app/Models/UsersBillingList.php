@@ -149,9 +149,10 @@ class UsersBillingList extends Model
     public static function getConversionRate()
     {
 
+        $date = strtotime('-1 month');
         $sql = "select a.created_times,a.placed_nums,b.pay_nums,concat ( left (b.pay_nums/a.placed_nums *100,5),'')";
         $sql .= " as percent from  (SELECT from_unixtime(`created_time`,'%Y-%m-%d') as created_times,count(fg_order_id)";
-        $sql .= " as placed_nums FROM `users_billing_lists` WHERE 1 group by created_times) as a  left join ";
+        $sql .= " as placed_nums FROM `users_billing_lists` WHERE `created_time`>= $date group by created_times) as a  left join ";
         $sql .= " (SELECT from_unixtime(`created_time`,'%Y-%m-%d') as created_times2,count(fg_order_id) as pay_nums ";
         $sql .= " FROM `users_billing_lists` WHERE send_coins_status in(2000,2004) group by created_times2) as b ";
         $sql .= " on a.created_times=b.created_times2;";
@@ -179,6 +180,7 @@ class UsersBillingList extends Model
 
         $data = self::select(\DB::raw("sum(amount) as total,from_unixtime(`created_time`,'%Y-%m-%d') as ctime"))
                     ->whereIn('send_coins_status', [2000, 2004])
+                    ->where('created_time', '>=', strtotime('-1 month'))
                     ->groupBy('ctime')
                     ->get();
 
@@ -197,6 +199,7 @@ class UsersBillingList extends Model
     {
         $nums = self::select(\DB::raw("count(fg_order_id) as total"))
                     ->whereIn('send_coins_status', [2000, 2004])
+                    ->where('created_time', '>=', strtotime('-1 month'))
                     ->first();
 
         return $nums['total'];
@@ -207,6 +210,7 @@ class UsersBillingList extends Model
     {
         $nums = self::select(\DB::raw("count(distinct user_id) as total"))
                     ->whereIn('send_coins_status', [2000, 2004])
+                    ->where('created_time', '>=', strtotime('-1 month'))
                     ->first();
 
         return $nums['total'];

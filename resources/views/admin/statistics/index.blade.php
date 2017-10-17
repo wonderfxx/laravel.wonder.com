@@ -30,7 +30,7 @@
         <div class="col-sm-3">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    <span class="label label-success pull-right">全年</span>
+                    <span class="label label-success pull-right">近一个月</span>
                     <h5>总计营收</h5>
                 </div>
                 <div class="ibox-content">
@@ -43,7 +43,7 @@
         <div class="col-sm-3">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    <span class="label label-danger pull-right">全年</span>
+                    <span class="label label-danger pull-right">近一个月</span>
                     <h5>付费用户</h5>
                 </div>
                 <div class="ibox-content">
@@ -56,7 +56,7 @@
         <div class="col-sm-3">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    <span class="label label-info pull-right">全年</span>
+                    <span class="label label-info pull-right">近一个月</span>
                     <h5>成单总数</h5>
                 </div>
                 <div class="ibox-content">
@@ -69,7 +69,7 @@
         <div class="col-sm-3">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    <span class="label label-primary pull-right">全年</span>
+                    <span class="label label-primary pull-right">近一个月</span>
                     <h5>注册用户</h5>
                 </div>
                 <div class="ibox-content">

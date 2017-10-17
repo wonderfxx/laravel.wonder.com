@@ -100,6 +100,7 @@ class User extends Authenticatable
     {
 
         $data = self::select(\DB::raw("count(userid) as total,from_unixtime(`created_at`,'%Y-%m-%d') as ctime"))
+                    ->where('created_at', '>=', strtotime('-1 month'))
                     ->groupBy('ctime')
                     ->get();
 
@@ -119,6 +120,7 @@ class User extends Authenticatable
 
         $data = self::select(\DB::raw("count(userid) as total,from_unixtime(`updated_at`,'%Y-%m-%d') as ctime"))
                     ->where('updated_at', '!=', '0')
+                    ->where('created_at', '>=', strtotime('-1 month'))
                     ->groupBy('ctime')
                     ->get();
 
