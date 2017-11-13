@@ -12,15 +12,18 @@ use Illuminate\Database\Eloquent\Model;
  * @property integer $created_time
  * @property integer $status
  * @property string  $remark
- * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingChange whereId($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingChange whereFgOrderId($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingChange whereCreatedTime($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingChange whereStatus($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingChange whereRemark($value)
+ * @method static UsersBillingChange whereId($value)
+ * @method static UsersBillingChange whereFgOrderId($value)
+ * @method static UsersBillingChange whereCreatedTime($value)
+ * @method static UsersBillingChange whereStatus($value)
+ * @method static UsersBillingChange whereRemark($value)
+ *
  * @mixin \Eloquent
  */
 class UsersBillingChange extends Model
 {
+
+    public $timestamps = false;
 
     /**
      * 记录变更日志

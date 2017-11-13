@@ -15,15 +15,15 @@ use Illuminate\Database\Eloquent\Model;
  * @property string         $menu_status    启用状态
  * @property \Carbon\Carbon $created_at     创建时间
  * @property \Carbon\Carbon $updated_at     更新时间
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmMenuList whereMenuName($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmMenuList whereMenuParentId($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmMenuList whereMenuAddress($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmMenuList whereMenuOrder($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmMenuList whereMenuStatus($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmMenuList whereCreatedAt($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmMenuList whereUpdatedAt($value)
+ * @method static AdmMenuList whereMenuName($value)
+ * @method static AdmMenuList whereMenuParentId($value)
+ * @method static AdmMenuList whereMenuAddress($value)
+ * @method static AdmMenuList whereMenuOrder($value)
+ * @method static AdmMenuList whereMenuStatus($value)
+ * @method static AdmMenuList whereCreatedAt($value)
+ * @method static AdmMenuList whereUpdatedAt($value)
  * @mixin \Eloquent
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmMenuList whereId($value)
+ * @method static AdmMenuList whereId($value)
  */
 class AdmMenuList extends Model
 {

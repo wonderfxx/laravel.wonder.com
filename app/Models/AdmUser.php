@@ -17,25 +17,25 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * @property string         $status      用户状态
  * @property \Carbon\Carbon $created_at  创建时间
  * @property \Carbon\Carbon $updated_at  更新时间
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereUserid($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereUsername($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser wherePassword($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereEmail($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereRemember($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereRegisterIp($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereLoginIp($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereStatus($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereCreatedAt($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereUpdatedAt($value)
+ * @method static AdmUser whereUserid($value)
+ * @method static AdmUser whereUsername($value)
+ * @method static AdmUser wherePassword($value)
+ * @method static AdmUser whereEmail($value)
+ * @method static AdmUser whereRemember($value)
+ * @method static AdmUser whereRegisterIp($value)
+ * @method static AdmUser whereLoginIp($value)
+ * @method static AdmUser whereStatus($value)
+ * @method static AdmUser whereCreatedAt($value)
+ * @method static AdmUser whereUpdatedAt($value)
  * @mixin \Eloquent
  * @property string         $remember_token
  * @property string         $api_token
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereRememberToken($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereApiToken($value)
- * @property string $last_login_game
- * @property integer $last_login_server
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereLastLoginGame($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereLastLoginServer($value)
+ * @method static AdmUser whereRememberToken($value)
+ * @method static AdmUser whereApiToken($value)
+ * @property string         $last_login_game
+ * @property integer        $last_login_server
+ * @method static AdmUser whereLastLoginGame($value)
+ * @method static AdmUser whereLastLoginServer($value)
  */
 class AdmUser extends Authenticatable
 {
@@ -51,7 +51,7 @@ class AdmUser extends Authenticatable
     protected $fillable = [
         'username', 'email', 'register_ip',
         'created_at', 'login_ip', 'updated_at', 'remember', 'status',
-        'password', 'remember_token', 'api_token'
+        'password', 'remember_token', 'api_token',
     ];
 
     /**
@@ -70,16 +70,14 @@ class AdmUser extends Authenticatable
      */
     public static function getColumns()
     {
+
         $data   = preg_split("/[\n]+/", (new \ReflectionClass(self::class))->getDocComment());
         $filter = ['userid', 'username', 'email', 'register_ip', 'login_ip', 'status', 'updated_at', 'created_at'];
         $return = [];
-        foreach ($data as $k => $value)
-        {
-            if (strstr($value, '@property'))
-            {
+        foreach ($data as $k => $value) {
+            if (strstr($value, '@property')) {
                 $temp = preg_split("/[\s]+/", trim(str_replace(' * @property ', '', $value)));
-                if (!in_array(str_replace('$', '', $temp[1]), $filter))
-                {
+                if (!in_array(str_replace('$', '', $temp[1]), $filter)) {
                     continue;
                 }
                 $return[] = [

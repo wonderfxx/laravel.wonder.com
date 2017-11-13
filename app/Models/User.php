@@ -19,23 +19,23 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * @property integer        $last_login_server      用户最近登录服务器
  * @property \Carbon\Carbon $created_at             创建时间
  * @property \Carbon\Carbon $updated_at             更新时间
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereUserid($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereUsername($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser wherePassword($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereEmail($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereRemember($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereRegisterIp($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereLoginIp($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereStatus($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereCreatedAt($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereUpdatedAt($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereLastLoginGame($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmUser whereLastLoginServer($value)
+ * @method static AdmUser whereUserid($value)
+ * @method static AdmUser whereUsername($value)
+ * @method static AdmUser wherePassword($value)
+ * @method static AdmUser whereEmail($value)
+ * @method static AdmUser whereRemember($value)
+ * @method static AdmUser whereRegisterIp($value)
+ * @method static AdmUser whereLoginIp($value)
+ * @method static AdmUser whereStatus($value)
+ * @method static AdmUser whereCreatedAt($value)
+ * @method static AdmUser whereUpdatedAt($value)
+ * @method static AdmUser whereLastLoginGame($value)
+ * @method static AdmUser whereLastLoginServer($value)
  * @mixin \Eloquent
  * @property string         $sns_id                 社交ID
  * @property string         $ad_source              用户来源
- * @method static \Illuminate\Database\Query\Builder|\App\Models\User whereSnsId($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\User whereAdSource($value)
+ * @method static User whereSnsId($value)
+ * @method static User whereAdSource($value)
  */
 class User extends Authenticatable
 {
@@ -79,6 +79,7 @@ class User extends Authenticatable
      */
     public static function getColumns()
     {
+
         $data   = preg_split("/[\n]+/", (new \ReflectionClass(self::class))->getDocComment());
         $return = [];
         foreach ($data as $k => $value) {
@@ -96,33 +97,41 @@ class User extends Authenticatable
         return $return;
     }
 
-    public static function getRegUsers()
+    public static function getRegUsers($start, $end)
     {
 
-        $data = self::select(\DB::raw("count(userid) as total,from_unixtime(`created_at`,'%Y-%m-%d') as ctime"))
-                    ->where('created_at', '>=', strtotime('-1 month'))
-                    ->groupBy('ctime')
-                    ->get();
+        $date_start = strtotime($start);
+        $end        = !empty($end) ? $end . ' 23:59:59' : date('Y-m-d', time()) . ' 23:59:59';
+        $date_end   = !empty($end) ? ' and `created_at` <=' . strtotime($end) : '';
+        $sql        = "select userid,created_at from `users` where created_at>=" . $date_start . $date_end;
+        $data       = \DB::select($sql);
 
-        $result          = [];
+        $result          = [
+            'users' => 0,
+            'date'  => [],
+            'value' => [],
+        ];
         $result['users'] = 0;
         foreach ($data as $items) {
-            $result['date'][]  = $items->ctime;
-            $result['value'][] = $items->total ? (int)$items->total : 0;
-            $result['users'] += $items->total ? (int)$items->total : 0;
+            $date = date('Y-m-d', $items->created_at);
+            @$result['value'][$date] += 1;
+            $result['users'] += 1;
+            @$result['date'][$date] = $date;
         }
 
         return $result;
     }
 
-    public static function getLoginUsers()
+    public static function getLoginUsers($start, $end)
     {
 
-        $data = self::select(\DB::raw("count(userid) as total,from_unixtime(`updated_at`,'%Y-%m-%d') as ctime"))
-                    ->where('updated_at', '!=', '0')
-                    ->where('created_at', '>=', strtotime('-1 month'))
-                    ->groupBy('ctime')
-                    ->get();
+        $date_start = strtotime($start);
+        $end        = !empty($end) ? $end . ' 23:59:59' : date('Y-m-d', time()) . ' 23:59:59';
+        $date_end   = !empty($end) ? ' and `created_at` <=' . strtotime($end) : '';
+        $sql        =
+            "select count(userid) as total,from_unixtime(`updated_at`,'%Y-%m-%d') as ctime from `users`";
+        $sql        .= "where updated_at!=0 and created_at>=" . $date_start . $date_end . " group by ctime";
+        $data       = \DB::select($sql);
 
         $result = [];
         foreach ($data as $items) {

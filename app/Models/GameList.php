@@ -28,31 +28,32 @@ use Illuminate\Database\Eloquent\Model;
  * @property string         $kongregate_api_key          KongregateKey
  * @property string         $kongregate_api_gid          KongregateGid
  * @property string         $kongregate_guest_key        KongregateGuestKey
- * @method static \Illuminate\Database\Query\Builder|\App\Models\GameList whereId($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\GameList whereGameCode($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\GameList whereGameName($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\GameList whereGameStatus($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\GameList whereGameCoinsName($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\GameList whereGameType($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\GameList whereGameLogo($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\GameList whereProportionUsd($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\GameList whereProportionLocal($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\GameList whereProportionLocalCurrency($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\GameList whereProportionCp($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\GameList whereProportionCpCurrency($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\GameList whereRechargeApi($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\GameList whereChargeBackApi($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\GameList whereServerListApi($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\GameList whereUserRoleApi($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\GameList whereCreatedAt($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\GameList whereUpdatedAt($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\GameList whereKongregateApiKey($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\GameList whereKongregateApiGid($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\GameList whereKongregateGuestKey($value)
+ * @method static GameList whereId($value)
+ * @method static GameList whereGameCode($value)
+ * @method static GameList whereGameName($value)
+ * @method static GameList whereGameStatus($value)
+ * @method static GameList whereGameCoinsName($value)
+ * @method static GameList whereGameType($value)
+ * @method static GameList whereGameLogo($value)
+ * @method static GameList whereProportionUsd($value)
+ * @method static GameList whereProportionLocal($value)
+ * @method static GameList whereProportionLocalCurrency($value)
+ * @method static GameList whereProportionCp($value)
+ * @method static GameList whereProportionCpCurrency($value)
+ * @method static GameList whereRechargeApi($value)
+ * @method static GameList whereChargeBackApi($value)
+ * @method static GameList whereServerListApi($value)
+ * @method static GameList whereUserRoleApi($value)
+ * @method static GameList whereCreatedAt($value)
+ * @method static GameList whereUpdatedAt($value)
+ * @method static GameList whereKongregateApiKey($value)
+ * @method static GameList whereKongregateApiGid($value)
+ * @method static GameList whereKongregateGuestKey($value)
  * @mixin \Eloquent
  */
 class GameList extends Model
 {
+
     public $timestamps = false;
 
     /**
@@ -64,6 +65,7 @@ class GameList extends Model
      */
     public static function getGameInfo($gid)
     {
+
         return self::whereGameCode($gid)->first();
     }
 
@@ -77,6 +79,7 @@ class GameList extends Model
      */
     public static function getCpAmountCurrnecy($gid, $game_coins)
     {
+
         $gameInfo = self::getGameInfo($gid);
 
         return [
@@ -92,6 +95,7 @@ class GameList extends Model
      */
     public static function getColumns()
     {
+
         $data   = preg_split("/[\n]+/", (new \ReflectionClass(self::class))->getDocComment());
         $return = [];
 

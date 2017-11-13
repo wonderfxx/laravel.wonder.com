@@ -34,43 +34,44 @@ use Illuminate\Database\Eloquent\Model;
  * @property integer $send_coins_status  发钻状态
  * @property integer $send_time          发钻时间
  * @property string  $is_test            测试订单
- * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingList whereFgOrderId($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingList whereGameCode($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingList whereServerId($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingList whereCountry($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingList whereChannelCode($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingList whereChannelSubCode($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingList whereChannelOrderId($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingList whereChannelPhone($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingList whereChannelEmail($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingList whereChannelPayTime($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingList whereChannelStatus($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingList whereUserId($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingList whereUserGrade($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingList whereUserRole($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingList whereUserRoleId($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingList whereUserIpAddress($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingList whereAmount($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingList whereCurrency($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingList whereAmountUsd($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingList whereGameCoins($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingList whereGameCoinsRewards($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingList whereProductId($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingList whereProductType($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingList whereCreatedTime($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingList whereSendCoinsStatus($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingList whereSendTime($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingList whereIsTest($value)
+ * @method static UsersBillingList whereFgOrderId($value)
+ * @method static UsersBillingList whereGameCode($value)
+ * @method static UsersBillingList whereServerId($value)
+ * @method static UsersBillingList whereCountry($value)
+ * @method static UsersBillingList whereChannelCode($value)
+ * @method static UsersBillingList whereChannelSubCode($value)
+ * @method static UsersBillingList whereChannelOrderId($value)
+ * @method static UsersBillingList whereChannelPhone($value)
+ * @method static UsersBillingList whereChannelEmail($value)
+ * @method static UsersBillingList whereChannelPayTime($value)
+ * @method static UsersBillingList whereChannelStatus($value)
+ * @method static UsersBillingList whereUserId($value)
+ * @method static UsersBillingList whereUserGrade($value)
+ * @method static UsersBillingList whereUserRole($value)
+ * @method static UsersBillingList whereUserRoleId($value)
+ * @method static UsersBillingList whereUserIpAddress($value)
+ * @method static UsersBillingList whereAmount($value)
+ * @method static UsersBillingList whereCurrency($value)
+ * @method static UsersBillingList whereAmountUsd($value)
+ * @method static UsersBillingList whereGameCoins($value)
+ * @method static UsersBillingList whereGameCoinsRewards($value)
+ * @method static UsersBillingList whereProductId($value)
+ * @method static UsersBillingList whereProductType($value)
+ * @method static UsersBillingList whereCreatedTime($value)
+ * @method static UsersBillingList whereSendCoinsStatus($value)
+ * @method static UsersBillingList whereSendTime($value)
+ * @method static UsersBillingList whereIsTest($value)
  * @mixin \Eloquent
  * @property integer $updated_time       变更时间
- * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingList whereUpdatedTime($value)
+ * @method static UsersBillingList whereUpdatedTime($value)
  * @property integer $package_id         套餐编号
- * @method static \Illuminate\Database\Query\Builder|\App\Models\UsersBillingList wherePackageId($value)
+ * @method static UsersBillingList wherePackageId($value)
  */
 class UsersBillingList extends Model
 {
 
-    public $timestamps = false;
+    protected $primaryKey = 'fg_order_id';
+    public    $timestamps = false;
 
     /**
      *  变更订单状态
@@ -82,6 +83,7 @@ class UsersBillingList extends Model
      */
     public static function recordChange($fg_order_id, $status)
     {
+
         return self::whereFgOrderId($fg_order_id)
                    ->update(
                        [
@@ -102,6 +104,7 @@ class UsersBillingList extends Model
      */
     public static function updateSendStatus($fg_order_id, $status)
     {
+
         return self::whereFgOrderId($fg_order_id)
                    ->update(
                        [
@@ -119,6 +122,7 @@ class UsersBillingList extends Model
      */
     public static function getColumns()
     {
+
         $data   = preg_split("/[\n]+/", (new \ReflectionClass(self::class))->getDocComment());
         $return = [];
         foreach ($data as $k => $value) {
@@ -142,78 +146,123 @@ class UsersBillingList extends Model
     }
 
     /**
-     * 获取每日用户的转化率
+     * 统计汇总
+     *
+     * @param        $start
+     * @param string $end
      *
      * @return array
      */
-    public static function getConversionRate()
+    public static function getStatistic($start, $end = '')
     {
 
-        $date = strtotime('-1 month');
-        $sql = "select a.created_times,a.placed_nums,b.pay_nums,concat ( left (b.pay_nums/a.placed_nums *100,5),'')";
-        $sql .= " as percent from  (SELECT from_unixtime(`created_time`,'%Y-%m-%d') as created_times,count(fg_order_id)";
-        $sql .= " as placed_nums FROM `users_billing_lists` WHERE `created_time`>= $date group by created_times) as a  left join ";
-        $sql .= " (SELECT from_unixtime(`created_time`,'%Y-%m-%d') as created_times2,count(fg_order_id) as pay_nums ";
-        $sql .= " FROM `users_billing_lists` WHERE send_coins_status in(2000,2004) group by created_times2) as b ";
-        $sql .= " on a.created_times=b.created_times2;";
+        $data = self::getOrderList($start, $end);
 
-        $data   = \DB::select($sql);
-        $result = [];
+        /**
+         * 获取每日用户的转化率
+         *
+         * conversion
+         */
+        $conversion = [
+            'placed_nums' => [],
+            'pay_nums'    => [],
+            'date'        => [],
+            'percent'     => [],
+        ];
+        /**
+         *
+         * recharge
+         */
+        $recharge = [
+            'total' => 0,
+            'value' => [],
+            'date'  => [],
+        ];
+
         foreach ($data as $items) {
-            $result['placed_nums'][] = $items->placed_nums;
-            $result['pay_nums'][]    = $items->pay_nums ? : 0;
-            $result['percent'][]     = (int)$items->percent ? : 0;
-            $result['date'][]        = $items->created_times;
 
+            $date = date('Y-m-d', $items->created_time);
+
+            /**
+             * conversion
+             */
+            @$conversion['placed_nums'][$date] += 1;
+            if (in_array($items->send_coins_status, ['2000', '2004'])) {
+                @$conversion['pay_nums'][$date] += 1;
+            }
+            @$conversion['date'][$date] = $date;
+
+            /**
+             * 获取每日营收
+             *
+             * recharge
+             */
+            $amount = number_format($items->amount / 10, '2', '.', '');
+            if (in_array($items->send_coins_status, ['2000', '2004'])) {
+                @$recharge['value'][$date] += $amount;
+                $recharge['total'] += $amount;
+            }
+            else {
+                @$recharge['value'][$date] += 0;
+            }
+            @$recharge['date'][$date] = $date;
+        }
+        /**
+         * conversion
+         */
+        foreach ($conversion['placed_nums'] as $key => $item) {
+            $pay                         = isset($conversion['pay_nums'][$key]) ? $conversion['pay_nums'][$key] : 0;
+            $conversion['percent'][$key] = number_format($pay / $item, '4', '.', '') * 100;
         }
 
-        return $result;
+        return [
+            'conversion' => $conversion,
+            'recharge'   => $recharge,
+        ];
     }
 
     /**
-     * 获取每日营收
+     * 订单笔数用户笔数
+     *
+     * @param        $start
+     * @param string $end
      *
      * @return array
      */
-    public static function getRechargeList()
+    public static function getOrderCount($start, $end = '')
     {
 
-        $data = self::select(\DB::raw("sum(amount) as total,from_unixtime(`created_time`,'%Y-%m-%d') as ctime"))
-                    ->whereIn('send_coins_status', [2000, 2004])
-                    ->where('created_time', '>=', strtotime('-1 month'))
-                    ->groupBy('ctime')
-                    ->get();
+        $date_start = strtotime($start);
+        $end        = !empty($end) ? $end . ' 23:59:59' : date('Y-m-d', time()) . ' 23:59:59';
+        $date_end   = !empty($end) ? ' and `created_time` <=' . strtotime($end) : '';
 
-        $result          = [];
-        $result['total'] = 0;
-        foreach ($data as $items) {
-            $result['date'][]  = $items->ctime;
-            $result['value'][] = $items->total ? (int)$items->total / 10 : 0;
-            $result['total'] += $items->total ? (int)$items->total / 10 : 0;
-        }
+        $sql  = "SELECT count(fg_order_id) AS orders,count(DISTINCT user_id) AS users FROM `users_billing_lists`";
+        $sql  .= "where send_coins_status in('2000','2004') and created_time>=" . $date_start . $date_end;
+        $data = \DB::select($sql);
 
-        return $result;
+        return [
+            'orders' => $data[0]->orders,
+            'users'  => $data[0]->users,
+        ];
     }
 
-    public static function getOrderCount()
+    /**
+     * 指定时间内的订单
+     *
+     * @param        $start
+     * @param string $end
+     *
+     * @return mixed
+     */
+    private static function getOrderList($start, $end = '')
     {
-        $nums = self::select(\DB::raw("count(fg_order_id) as total"))
-                    ->whereIn('send_coins_status', [2000, 2004])
-                    ->where('created_time', '>=', strtotime('-1 month'))
-                    ->first();
 
-        return $nums['total'];
+        $date_start = strtotime($start);
+        $end        = !empty($end) ? $end . ' 23:59:59' : date('Y-m-d', time()) . ' 23:59:59';
+        $date_end   = !empty($end) ? ' and `created_time` <=' . strtotime($end) : '';
+        $sql        =
+            "SELECT created_time,send_coins_status,amount FROM `users_billing_lists` WHERE `created_time`>= $date_start $date_end ";
 
-    }
-
-    public static function getUserCount()
-    {
-        $nums = self::select(\DB::raw("count(distinct user_id) as total"))
-                    ->whereIn('send_coins_status', [2000, 2004])
-                    ->where('created_time', '>=', strtotime('-1 month'))
-                    ->first();
-
-        return $nums['total'];
-
+        return \DB::select($sql);
     }
 }

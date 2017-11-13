@@ -14,17 +14,18 @@ use Illuminate\Database\Eloquent\Model;
  * @property string         $menu_status 启用状态
  * @property \Carbon\Carbon $created_at  创建时间
  * @property \Carbon\Carbon $updated_at  更新时间
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmMenuParentList whereId($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmMenuParentList whereMenuName($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmMenuParentList whereMenuIcon($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmMenuParentList whereMenuOrder($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmMenuParentList whereMenuStatus($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmMenuParentList whereCreatedAt($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Models\AdmMenuParentList whereUpdatedAt($value)
+ * @method static AdmMenuParentList whereId($value)
+ * @method static AdmMenuParentList whereMenuName($value)
+ * @method static AdmMenuParentList whereMenuIcon($value)
+ * @method static AdmMenuParentList whereMenuOrder($value)
+ * @method static AdmMenuParentList whereMenuStatus($value)
+ * @method static AdmMenuParentList whereCreatedAt($value)
+ * @method static AdmMenuParentList whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class AdmMenuParentList extends Model
 {
+
     public $timestamps = false;
 
     /**
@@ -34,13 +35,12 @@ class AdmMenuParentList extends Model
      */
     public static function getColumns()
     {
+
         $data   = preg_split("/[\n]+/", (new \ReflectionClass(self::class))->getDocComment());
         $return = [];
-        foreach ($data as $k => $value)
-        {
-            if (strstr($value, '@property'))
-            {
-                $temp     = preg_split("/[\s]+/", trim(str_replace(' * @property ', '', $value)));
+        foreach ($data as $k => $value) {
+            if (strstr($value, '@property')) {
+                $temp           = preg_split("/[\s]+/", trim(str_replace(' * @property ', '', $value)));
                 $index          = str_replace('$', '', $temp[1]);
                 $return[$index] = [
                     'field' => $index,
@@ -68,8 +68,7 @@ class AdmMenuParentList extends Model
 
         $all    = $this->all(['id', 'menu_name']);
         $return = [];
-        foreach ($all as $item)
-        {
+        foreach ($all as $item) {
             $return[$item->id] = $item->menu_name;
         }
 
