@@ -17,6 +17,7 @@ class UsersLoginLog extends Model
 
     protected $primaryKey = 'id';
     public    $timestamps = false;
+    protected $table      = 'users_login_log';
     protected $fillable   = ['userid', 'login_ip', 'created_at'];
 
     /**
