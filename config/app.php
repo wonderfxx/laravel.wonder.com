@@ -52,7 +52,7 @@ return [
     |
     */
 
-    'timezone' => 'PRC',
+    'timezone' => 'America/Los_Angeles',//'PRC',
 
     /*
     |--------------------------------------------------------------------------
@@ -207,7 +207,6 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View'      => Illuminate\Support\Facades\View::class,
         'Socialize' => Laravel\Socialite\Facades\Socialite::class,
-
         'Form'      => Collective\Html\FormFacade::class,
         'HTML'      => Collective\Html\HtmlFacade::class, // Optional
     ],
