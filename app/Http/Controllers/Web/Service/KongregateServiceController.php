@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Web\Games\PlayController;
 use App\Models\GameList;
 use App\Models\User;
+use App\Models\UsersLoginLog;
 use Illuminate\Support\Facades\Input;
 use libraries\CommonFunc;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -90,6 +91,9 @@ class KongregateServiceController extends Controller
                     \Auth::guard()->login($user);
                 }
             }
+
+            //login log
+            UsersLoginLog::recordLoginLog($user->userid);
 
             return PlayController::getInstance()->play($credentials['gid'], $credentials['sid'], true);
         }

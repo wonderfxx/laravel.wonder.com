@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Admin\Statistics;
 
 use App\Models\User;
 use App\Models\UsersBillingList;
+use App\Models\UsersLoginLog;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Input;
 
 class UserEveryDayController extends Controller
 {
@@ -15,6 +17,7 @@ class UserEveryDayController extends Controller
      */
     public function __construct()
     {
+
         $this->middleware('admin');
 
         //共享数据
@@ -32,54 +35,45 @@ class UserEveryDayController extends Controller
      */
     public function index()
     {
-        $regUsers   = User::getRegUsers();
-        $loginUsers = User::getLoginUsers();
-        $data       = UsersBillingList::getRechargeList();
-        $result     = UsersBillingList::getConversionRate();
+
+        $start      = !empty(Input::get('start')) ? Input::get('start') : date('Y-m-d', strtotime('-6 day'));
+        $end        = Input::get('end');
+        $regUsers   = User::getRegUsers($start, $end);
+        $loginUsers = UsersLoginLog::getLoginUser($start, $end);
+        $result     = UsersBillingList::getStatistic($start, $end);
+        $orders     = UsersBillingList::getOrderCount($start, $end);
+        $data       = $result['recharge'];
+        $result     = $result['conversion'];
 
         return view(
             'admin.statistics.index',
             [
 
-                'placed_nums'       => json_encode($result['placed_nums']),
-                'pay_nums'          => json_encode($result['pay_nums']),
-                'date'              => json_encode($result['date']),
-                'percent'           => json_encode($result['percent']),
-                'amount_date'       => json_encode($data['date']),
-                'amount_total'      => json_encode($data['value']),
+                'placed_nums'       => json_encode(array_values($result['placed_nums'])),
+                'pay_nums'          => json_encode(array_values($result['pay_nums'])),
+                'date'              => json_encode(array_values($result['date'])),
+                'percent'           => json_encode(array_values($result['percent'])),
+                'amount_date'       => json_encode(array_values($data['date'])),
+                'amount_total'      => json_encode(array_values($data['value'])),
                 'head_orders_total' => $data['total'],
-                'head_orders_nums'  => UsersBillingList::getOrderCount(),
-                'head_pay_nums'     => UsersBillingList::getUserCount(),
+                'head_orders_nums'  => $orders['orders'],
+                'head_pay_nums'     => $orders['users'],
                 'head_reg_users'    => $regUsers['users'],
-
-                'reg_date'    => json_encode($regUsers['date']),
-                'reg_total'   => json_encode($regUsers['value']),
-                'login_date'  => json_encode($loginUsers['date']),
-                'login_total' => json_encode($loginUsers['value']),
-
+                'date_start'        => $start,
+                'date_end'          => $end,
+                'reg_date'          => json_encode(array_values($regUsers['date'])),
+                'reg_total'         => json_encode(array_values($regUsers['value'])),
+                'login_date'        => json_encode($loginUsers['date']),
+                'login_total'       => json_encode($loginUsers['value']),
             ]
-
         );
-
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         //
@@ -95,10 +89,6 @@ class UserEveryDayController extends Controller
     public function show($id)
     {
 
-        $data = UsersBillingList::whereFgOrderId((int)$id)->first()->toArray();
-        print_r($data);
-        die;
-
         return view(
             'admin.billings.index_info',
             [
@@ -107,38 +97,20 @@ class UserEveryDayController extends Controller
         );
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int $id
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         //
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  int                      $id
-     *
-     * @return \Illuminate\Http\Response
+     * @param \Illuminate\Http\Request $request
+     * @param                          $id
      */
     public function update(Request $request, $id)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         //
