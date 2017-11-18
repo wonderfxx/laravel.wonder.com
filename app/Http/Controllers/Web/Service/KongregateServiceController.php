@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class KongregateServiceController extends Controller
 {
+
     private $authApi      = 'https://www.kongregate.com/api/authenticate.json';
     private $statisticApi = 'https://api.kongregate.com/api/submit_statistics.json';
     private $statisticKey = 'ZsRtm5Ya3.Q&MHm!M';
@@ -24,7 +25,7 @@ class KongregateServiceController extends Controller
     public function checkAuth()
     {
 
-        $credentials    = [
+        $credentials = [
             'gid'   => Input::get('gid'),
             'sid'   => Input::get('sid'),
             'uid'   => Input::get('uid'),
@@ -80,6 +81,7 @@ class KongregateServiceController extends Controller
                         'register_ip'       => \Request::getClientIp(),
                         'status'            => 'Y',
                         'created_at'        => time(),
+                        'updated_at'        => time(),
                     ]
                 );
                 $user = User::whereEmail($loginEmail)->first();
@@ -131,9 +133,9 @@ class KongregateServiceController extends Controller
         $credentials['uid'] = $userInfo->sns_id;
 
         //获取数据
-        $data[$credentials['gid'] .'-user-grade']  = $credentials['grade'];
-        $data[$credentials['gid'] .'-user-loaded'] = $credentials['loaded'];
-        $data[$credentials['gid'] .'-user-coins']  = $credentials['coins'];
+        $data[$credentials['gid'] . '-user-grade']  = $credentials['grade'];
+        $data[$credentials['gid'] . '-user-loaded'] = $credentials['loaded'];
+        $data[$credentials['gid'] . '-user-coins']  = $credentials['coins'];
 
         $gameServerInfo = GameList::whereGameCode($credentials['gid'])->first();
         $isReported     = $this->submitGameData($credentials['uid'], $gameServerInfo->kongregate_api_key, $data);
