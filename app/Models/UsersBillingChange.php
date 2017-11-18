@@ -17,7 +17,6 @@ use Illuminate\Database\Eloquent\Model;
  * @method static UsersBillingChange whereCreatedTime($value)
  * @method static UsersBillingChange whereStatus($value)
  * @method static UsersBillingChange whereRemark($value)
- *
  * @mixin \Eloquent
  */
 class UsersBillingChange extends Model
