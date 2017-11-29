@@ -223,7 +223,7 @@ class BillingsController extends Controller
                     <i class="fa fa-search" ></i >
                 </a >
             ';
-            $items->fg_order_id      = '<b>' . $items->fg_order_id . '</b>';
+//            $items->fg_order_id      = '<b>' . $items->fg_order_id . '</b>';
             $items->user_id          = '<b>' . $items->user_id . '</b>';
             $items->channel_order_id = '<b>' . $items->channel_order_id . '</b>';
 
