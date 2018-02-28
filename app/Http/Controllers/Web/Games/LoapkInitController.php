@@ -64,7 +64,7 @@ class LoapkInitController extends Controller implements GamesBaseInterface
             && \Auth::guard()->user()->last_login_server
         ) {
             $userLogin  = \Auth::guard()->user()->last_login_server;
-            $isTestUser = in_array(\Auth::guard()->user()->sns_id,['4867361','29989664','29980784','5305715']) ? true : false;
+            $isTestUser = in_array(\Auth::guard()->user()->sns_id,['4867361','29989664','29980784','5305715','35603331']) ? true : false;
         }
         else {
             $userLogin  = '';
